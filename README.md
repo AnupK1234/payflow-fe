@@ -1,59 +1,179 @@
-# PayflowFe
+# PayFlow : Payroll Management System - Angular Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.1.
+This is the **Angular 19 frontend** for the Payroll Management System.
+It is built with **Angular 19**, **Bootstrap 5**, and follows **best practices for production-ready applications**.
 
-## Development server
+---
 
-To start a local development server, run:
+## Table of Contents
+
+* [Prerequisites](#prerequisites)
+* [Installation](#installation)
+* [Running the Project](#running-the-project)
+* [Building for Production](#building-for-production)
+* [Folder Structure](#folder-structure)
+* [Core Concepts](#core-concepts)
+* [Environment Variables](#environment-variables)
+* [VS Code Recommended Setup](#vs-code-recommended-setup)
+
+---
+
+## Prerequisites
+
+Make sure you have installed:
+
+* [Node.js](https://nodejs.org/) >= 18.x
+* [Angular CLI](https://angular.io/cli) >= 19.x
+* [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+
+---
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone <your-repo-url>
+cd payroll-fe
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+---
+
+## Running the Project
+
+Start the development server:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Visit the app at `http://localhost:4200`.
+The app will automatically reload when you change any source files.
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Building for Production
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+To build the project for production:
 
 ```bash
-ng generate --help
+ng build --configuration production
 ```
 
-## Building
+* Output will be in the `dist/` folder.
+* You can serve these files via **NGINX, Apache, or Spring Boot static resources**.
 
-To build the project run:
+---
 
-```bash
-ng build
+## Folder Structure
+
+```
+src/
+ ├── app/
+ │    ├── core/                # Singleton services and app-wide components
+ │    │    ├── services/       # AuthService, ApiService
+ │    │    ├── guards/         # AuthGuard, RoleGuard
+ │    │    ├── interceptors/   # JWT interceptor, error handling
+ │    │    ├── layouts/        # Navbar, Sidebar, Footer
+ │    │    └── core.module.ts
+ │    │
+ │    ├── shared/              # Reusable components, pipes, directives
+ │    │    ├── components/     # Buttons, Modals, Tables
+ │    │    ├── directives/     # Custom directives
+ │    │    ├── pipes/          # CurrencyPipe, DatePipe
+ │    │    └── shared.module.ts
+ │    │
+ │    ├── features/            # Feature modules (lazy-loaded)
+ │    │    ├── employees/      # Employee management module
+ │    │    ├── payroll/        # Payroll processing module
+ │    │    ├── reports/        # Reports & analytics module
+ │    │    └── settings/       # App settings module
+ │    │
+ │    ├── auth/                # Authentication module (login, register)
+ │    ├── app-routing.module.ts
+ │    ├── app.module.ts
+ │    └── app.component.ts
+ ├── assets/                   # Images, fonts, icons
+ ├── public/                   # Raw static files (robots.txt, favicon.ico)
+ ├── environments/             # environment.ts and environment.prod.ts
+ └── styles/                   # Global SCSS, Bootstrap overrides
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+## Core Concepts
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+* **CoreModule**: Singleton services, app-wide guards, interceptors, layout components.
 
-```bash
-ng test
+  * Import only once in `AppModule`.
+
+* **SharedModule**: Reusable UI components, directives, and pipes.
+
+  * Import in any feature module.
+
+* **Feature Modules**: Each major business domain (Employees, Payroll, Reports) is a **lazy-loaded module**.
+
+* **AuthModule**: Handles authentication pages and logic.
+
+* **Lazy Loading**: Improves app performance by loading modules only when needed.
+
+---
+
+## Environment Variables
+
+Angular uses `environment.ts` files instead of `.env`:
+
+* `src/environments/environment.ts` → Development
+* `src/environments/environment.prod.ts` → Production
+
+Example:
+
+```ts
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:8080/api'
+};
 ```
 
-## Running end-to-end tests
+Access in code:
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+```ts
+import { environment } from '../environments/environment';
+this.http.get(`${environment.apiUrl}/employees`);
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+> ⚠️ Do not store secrets (DB credentials, JWT keys) in Angular — frontend is public. Keep secrets in backend.
 
-## Additional Resources
+---
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## VS Code Recommended Setup
+
+### Extensions (`.vscode/extensions.json`)
+
+* Angular Language Service (`angular.ng-template`)
+* Prettier (`esbenp.prettier-vscode`)
+* ESLint (`dbaeumer.vscode-eslint`)
+* GitLens (`eamodio.gitlens`)
+
+### Settings (`.vscode/settings.json`)
+
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "files.exclude": {
+    "node_modules": true,
+    "dist": true
+  }
+}
+```
+
+
