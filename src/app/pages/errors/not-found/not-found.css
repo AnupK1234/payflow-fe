@@ -1,0 +1,27 @@
+.not-found-container {
+    min-height: 100vh;
+    background-color: #f3f4f6;
+    /* Light Gray */
+    color: #1f2937;
+    /* Dark Gray */
+}
+
+.text-primary-dark {
+    color: #1e40af;
+}
+
+.text-medium-gray {
+    color: #6b7280;
+}
+
+.btn-primary-gradient {
+    background: linear-gradient(135deg, #2563eb 0%, #0d9488 100%);
+    border: none;
+    color: #ffffff;
+    transition: background 0.3s ease;
+}
+
+.btn-primary-gradient:hover {
+    background: linear-gradient(135deg, #1e40af 0%, #0d9488 100%);
+    color: #ffffff;
+}
