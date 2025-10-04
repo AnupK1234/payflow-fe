@@ -1,1 +1,355 @@
-<p>signup works!</p>
+<div class="signup-container">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <a routerLink="/" class="d-inline-flex align-items-center text-decoration-none mb-3">
+                        <i class="bi bi-cash-coin text-primary fs-2 me-2"></i>
+                        <h3 class="mb-0 fw-bold text-primary">PayFlow</h3>
+                    </a>
+                    <h2 class="fw-bold mb-2">Register Your Organization</h2>
+                    <p class="text-muted">Complete the form below to get started with PayFlow</p>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container mb-4">
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-primary" [style.width.%]="getProgressPercentage()"
+                            style="transition: width 0.3s ease;"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3">
+                        <div class="step-indicator" [class.active]="currentStep >= 1">
+                            <div class="step-circle">
+                                <i class="bi" [class.bi-check]="currentStep > 1"
+                                    [class.bi-1-circle]="currentStep === 1"></i>
+                            </div>
+                            <small class="d-none d-md-block mt-2">Organization</small>
+                        </div>
+                        <div class="step-indicator" [class.active]="currentStep >= 2">
+                            <div class="step-circle">
+                                <i class="bi" [class.bi-check]="currentStep > 2"
+                                    [class.bi-2-circle]="currentStep <= 2"></i>
+                            </div>
+                            <small class="d-none d-md-block mt-2">Bank Details</small>
+                        </div>
+                        <div class="step-indicator" [class.active]="currentStep >= 3">
+                            <div class="step-circle">
+                                <i class="bi bi-3-circle"></i>
+                            </div>
+                            <small class="d-none d-md-block mt-2">Admin Account</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alert Messages -->
+                @if (errorMessage) {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    {{ errorMessage }}
+                    <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+                </div>
+                }
+
+                @if (successMessage) {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    {{ successMessage }}
+                </div>
+                }
+
+                <!-- Registration Form -->
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-4 p-md-5">
+                        <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+
+                            <!-- Step 1: Organization Details -->
+                            @if (currentStep === 1) {
+                            <div class="step-content">
+                                <h5 class="fw-bold mb-4">
+                                    <i class="bi bi-building text-primary me-2"></i>
+                                    Organization Information
+                                </h5>
+
+                                <div class="mb-3">
+                                    <label for="name" class="form-label fw-semibold">
+                                        Organization Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="name" formControlName="name" class="form-control"
+                                        [class.is-invalid]="isFieldInvalid('name')"
+                                        placeholder="Enter organization name" />
+                                    @if (isFieldInvalid('name')) {
+                                    <div class="invalid-feedback">
+                                        {{ getErrorMessage('name') }}
+                                    </div>
+                                    }
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="registrationNumber" class="form-label fw-semibold">
+                                        Registration Number <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="registrationNumber" formControlName="registrationNumber"
+                                        class="form-control text-uppercase"
+                                        [class.is-invalid]="isFieldInvalid('registrationNumber')"
+                                        placeholder="e.g., ABC1234567890" maxlength="20" />
+                                    @if (isFieldInvalid('registrationNumber')) {
+                                    <div class="invalid-feedback">
+                                        {{ getErrorMessage('registrationNumber') }}
+                                    </div>
+                                    }
+                                    <small class="text-muted">10-20 alphanumeric characters</small>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="address" class="form-label fw-semibold">
+                                        Address <span class="text-danger">*</span>
+                                    </label>
+                                    <textarea id="address" formControlName="address" class="form-control"
+                                        [class.is-invalid]="isFieldInvalid('address')" rows="3"
+                                        placeholder="Enter complete address"></textarea>
+                                    @if (isFieldInvalid('address')) {
+                                    <div class="invalid-feedback">
+                                        {{ getErrorMessage('address') }}
+                                    </div>
+                                    }
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">
+                                        Verification Documents <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="upload-area" (click)="fileInput.click()">
+                                        <i class="bi bi-cloud-upload fs-1 text-primary mb-2"></i>
+                                        <p class="mb-1 fw-semibold">Click to upload documents</p>
+                                        <small class="text-muted">PDF, JPG, PNG (Max 5MB each)</small>
+                                        <input #fileInput type="file" class="d-none" multiple
+                                            accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelect($event)" />
+                                    </div>
+
+                                    @if (selectedFiles.length > 0) {
+                                    <div class="mt-3">
+                                        <p class="fw-semibold mb-2">Selected Files:</p>
+                                        @for (file of selectedFiles; track file.name; let i = $index) {
+                                        <div
+                                            class="file-item d-flex align-items-center justify-content-between p-2 mb-2 bg-light rounded">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-file-earmark-pdf text-danger fs-4 me-2"></i>
+                                                <div>
+                                                    <div class="fw-semibold">{{ file.name }}</div>
+                                                    <small class="text-muted">{{ (file.size / 1024).toFixed(2) }}
+                                                        KB</small>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                (click)="removeFile(i)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                        }
+                                    </div>
+                                    }
+                                </div>
+
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button type="button" class="btn btn-primary px-4" (click)="nextStep()">
+                                        Next <i class="bi bi-arrow-right ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            }
+
+                            <!-- Step 2: Bank Account Details -->
+                            @if (currentStep === 2) {
+                            <div class="step-content">
+                                <h5 class="fw-bold mb-4">
+                                    <i class="bi bi-bank text-primary me-2"></i>
+                                    Bank Account Information
+                                </h5>
+
+                                <div class="mb-3">
+                                    <label for="accountNumber" class="form-label fw-semibold">
+                                        Account Number <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="accountNumber" formControlName="accountNumber"
+                                        class="form-control" [class.is-invalid]="isFieldInvalid('accountNumber')"
+                                        placeholder="Enter 12-digit account number" maxlength="12" />
+                                    @if (isFieldInvalid('accountNumber')) {
+                                    <div class="invalid-feedback">
+                                        {{ getErrorMessage('accountNumber') }}
+                                    </div>
+                                    }
+                                    <small class="text-muted">Must be exactly 12 digits</small>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="ifsc" class="form-label fw-semibold">
+                                        IFSC Code <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="ifsc" formControlName="ifsc"
+                                        class="form-control text-uppercase" [class.is-invalid]="isFieldInvalid('ifsc')"
+                                        placeholder="e.g., ABCD0123456" maxlength="11" />
+                                    @if (isFieldInvalid('ifsc')) {
+                                    <div class="invalid-feedback">
+                                        {{ getErrorMessage('ifsc') }}
+                                    </div>
+                                    }
+                                    <small class="text-muted">11 characters: 4 letters + 0 + 6 alphanumeric</small>
+                                </div>
+
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    This bank account will be used for receiving payments and salary disbursements.
+                                </div>
+
+                                <div class="d-flex justify-content-between gap-2">
+                                    <button type="button" class="btn btn-outline-secondary px-4"
+                                        (click)="previousStep()">
+                                        <i class="bi bi-arrow-left me-2"></i> Previous
+                                    </button>
+                                    <button type="button" class="btn btn-primary px-4" (click)="nextStep()">
+                                        Next <i class="bi bi-arrow-right ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            }
+
+                            <!-- Step 3: Admin Account Details -->
+                            @if (currentStep === 3) {
+                            <div class="step-content">
+                                <h5 class="fw-bold mb-4">
+                                    <i class="bi bi-person-badge text-primary me-2"></i>
+                                    Admin Account Setup
+                                </h5>
+
+                                <div class="mb-3">
+                                    <label for="adminUsername" class="form-label fw-semibold">
+                                        Username <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="adminUsername" formControlName="adminUsername"
+                                        class="form-control" [class.is-invalid]="isFieldInvalid('adminUsername')"
+                                        placeholder="Choose a username" autocomplete="username" />
+                                    @if (isFieldInvalid('adminUsername')) {
+                                    <div class="invalid-feedback">
+                                        {{ getErrorMessage('adminUsername') }}
+                                    </div>
+                                    }
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="adminEmail" class="form-label fw-semibold">
+                                        Email Address <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="email" id="adminEmail" formControlName="adminEmail"
+                                        class="form-control" [class.is-invalid]="isFieldInvalid('adminEmail')"
+                                        placeholder="admin@organization.com" autocomplete="email" />
+                                    @if (isFieldInvalid('adminEmail')) {
+                                    <div class="invalid-feedback">
+                                        {{ getErrorMessage('adminEmail') }}
+                                    </div>
+                                    }
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="tempPassword" class="form-label fw-semibold">
+                                        Password <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <input [type]="showPassword ? 'text' : 'password'" id="tempPassword"
+                                            formControlName="tempPassword" class="form-control"
+                                            [class.is-invalid]="isFieldInvalid('tempPassword')"
+                                            placeholder="Create a strong password" autocomplete="new-password" />
+                                        <span class="input-group-text cursor-pointer"
+                                            (click)="togglePasswordVisibility('password')">
+                                            <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                                        </span>
+                                    </div>
+                                    @if (isFieldInvalid('tempPassword')) {
+                                    <div class="invalid-feedback d-block">
+                                        {{ getErrorMessage('tempPassword') }}
+                                    </div>
+                                    }
+                                    <small class="text-muted">Minimum 8 characters</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label fw-semibold">
+                                        Confirm Password <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirmPassword"
+                                            formControlName="confirmPassword" class="form-control"
+                                            [class.is-invalid]="isFieldInvalid('confirmPassword') || signupForm.hasError('passwordMismatch')"
+                                            placeholder="Re-enter your password" autocomplete="new-password" />
+                                        <span class="input-group-text cursor-pointer"
+                                            (click)="togglePasswordVisibility('confirm')">
+                                            <i [class]="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                                        </span>
+                                    </div>
+                                    @if (signupForm.hasError('passwordMismatch') &&
+                                    signupForm.get('confirmPassword')?.touched) {
+                                    <div class="invalid-feedback d-block">
+                                        Passwords do not match
+                                    </div>
+                                    }
+                                </div>
+
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" id="acceptTerms" formControlName="acceptTerms"
+                                            class="form-check-input"
+                                            [class.is-invalid]="isFieldInvalid('acceptTerms')" />
+                                        <label for="acceptTerms" class="form-check-label">
+                                            I agree to the <a href="#" class="text-primary">Terms and Conditions</a> and
+                                            <a href="#" class="text-primary">Privacy Policy</a>
+                                        </label>
+                                        @if (isFieldInvalid('acceptTerms')) {
+                                        <div class="invalid-feedback d-block">
+                                            You must accept the terms and conditions
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <strong>Note:</strong> You will be required to reset your password on first login
+                                    for security purposes.
+                                </div>
+
+                                <div class="d-flex justify-content-between gap-2">
+                                    <button type="button" class="btn btn-outline-secondary px-4"
+                                        (click)="previousStep()">
+                                        <i class="bi bi-arrow-left me-2"></i> Previous
+                                    </button>
+                                    <button type="submit" class="btn btn-primary px-4" [disabled]="isLoading">
+                                        @if (isLoading) {
+                                        <span class="spinner-border spinner-border-sm me-2"></span>
+                                        Registering...
+                                        } @else {
+                                        <i class="bi bi-check-circle me-2"></i>
+                                        Complete Registration
+                                        }
+                                    </button>
+                                </div>
+                            </div>
+                            }
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Additional Info -->
+                <div class="text-center mt-4">
+                    <p class="text-muted">
+                        Already have an account?
+                        <a routerLink="/login" class="text-primary text-decoration-none fw-semibold">Sign In</a>
+                    </p>
+                    <a routerLink="/" class="text-muted text-decoration-none">
+                        <i class="bi bi-arrow-left me-2"></i>
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -81,3 +81,5 @@ src/environments/environment*.ts
 
 # Generated files
 *.tsbuildinfo
+
+prompts.md

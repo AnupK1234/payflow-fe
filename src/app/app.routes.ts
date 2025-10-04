@@ -18,16 +18,21 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/auth/login/login.component').then(m => m.LoginComponent),
     title: 'Login - PayFlow'
   },
-//   {
-//     path: 'signup',
-//     loadComponent: () => import('./pages/auth/signup/signup.component').then(m => m.SignupComponent),
-//     title: 'Sign Up - PayFlow'
-//   },
-//   {
-//     path: 'forgot-password',
-//     loadComponent: () => import('./pages/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent),
-//     title: 'Forgot Password - PayFlow'
-//   },
+  {
+    path: 'signup',
+    loadComponent: () => import('./pages/auth/signup/signup.component').then(m => m.SignupComponent),
+    title: 'Sign Up - PayFlow'
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: () => import('./pages/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent),
+    title: 'Forgot Password - PayFlow'
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./pages/auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
+    title: 'Reset Password - PayFlow'
+  },
 
   // Bank Admin routes - with auth guard
 //   {
