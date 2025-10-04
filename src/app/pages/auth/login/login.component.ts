@@ -79,6 +79,8 @@ export class LoginComponent implements OnInit {
       next: (user) => {
         this.isLoading = false;
         // 4. Role-based routing is delegated to the AuthService
+        console.log("USER IS : ", user);
+        
         this.authService.routeUserByRole(user);
       },
       error: (error: Error) => {
