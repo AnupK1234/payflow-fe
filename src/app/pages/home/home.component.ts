@@ -16,10 +16,10 @@ interface Statistic {
 @Component({
   selector: 'app-home',
   standalone: true,
-  templateUrl: './home.html',
-  styleUrls: ['./home.css'],
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css'],
 })
-export class Home implements OnInit {
+export class HomeComponent implements OnInit {
   features: Feature[] = [
     {
       icon: 'bi-shield-check',

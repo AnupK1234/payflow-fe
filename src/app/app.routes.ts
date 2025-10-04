@@ -8,16 +8,16 @@ export const routes: Routes = [
   // Home route - loads immediately
   {
     path: '',
-    loadComponent: () => import('./pages/home/home').then(m => m.Home),
+    loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent),
     title: 'PayFlow - Payment and Payroll Management System'
   },
 
   // Authentication routes
-//   {
-//     path: 'login',
-//     loadComponent: () => import('./pages/auth/login/login.component').then(m => m.LoginComponent),
-//     title: 'Login - PayFlow'
-//   },
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/auth/login/login.component').then(m => m.LoginComponent),
+    title: 'Login - PayFlow'
+  },
 //   {
 //     path: 'signup',
 //     loadComponent: () => import('./pages/auth/signup/signup.component').then(m => m.SignupComponent),

@@ -1,0 +1,198 @@
+<div class="login-container">
+    <div class="container">
+        <div class="row min-vh-100 align-items-center justify-content-center">
+            <div class="col-lg-10">
+                <div class="row g-0 shadow-lg rounded-4 overflow-hidden">
+                    <!-- Left Side - Branding -->
+                    <div
+                        class="col-lg-6 d-none d-lg-flex bg-gradient-primary text-white p-5 flex-column justify-content-between">
+                        <div>
+                            <a routerLink="/" class="d-flex align-items-center text-white text-decoration-none mb-4">
+                                <i class="bi bi-cash-coin fs-2 me-2"></i>
+                                <h3 class="mb-0 fw-bold">PayFlow</h3>
+                            </a>
+                            <h2 class="display-5 fw-bold mb-4">Welcome Back!</h2>
+                            <p class="lead mb-4">
+                                Sign in to access your payroll and payment management dashboard
+                            </p>
+                        </div>
+
+                        <div class="features-list">
+                            <div class="feature-item d-flex align-items-center mb-3">
+                                <div class="icon-box bg-white bg-opacity-25 rounded-circle p-3 me-3">
+                                    <i class="bi bi-shield-check fs-5"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-semibold">Secure Authentication</h6>
+                                    <small class="opacity-75">Bank-grade security with JWT</small>
+                                </div>
+                            </div>
+
+                            <div class="feature-item d-flex align-items-center mb-3">
+                                <div class="icon-box bg-white bg-opacity-25 rounded-circle p-3 me-3">
+                                    <i class="bi bi-lightning-charge fs-5"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-semibold">Instant Access</h6>
+                                    <small class="opacity-75">Role-based dashboards</small>
+                                </div>
+                            </div>
+
+                            <div class="feature-item d-flex align-items-center">
+                                <div class="icon-box bg-white bg-opacity-25 rounded-circle p-3 me-3">
+                                    <i class="bi bi-clock-history fs-5"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-semibold">24/7 Available</h6>
+                                    <small class="opacity-75">Access anytime, anywhere</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side - Login Form -->
+                    <div class="col-lg-6 bg-white p-5">
+                        <div class="login-form-container">
+                            <!-- Mobile Logo -->
+                            <div class="d-lg-none text-center mb-4">
+                                <a routerLink="/" class="d-inline-flex align-items-center text-decoration-none">
+                                    <i class="bi bi-cash-coin text-primary fs-2 me-2"></i>
+                                    <h3 class="mb-0 fw-bold text-primary">PayFlow</h3>
+                                </a>
+                            </div>
+
+                            <div class="text-center mb-4">
+                                <h4 class="fw-bold mb-2">Sign In</h4>
+                                <p class="text-muted">Enter your credentials to access your account</p>
+                            </div>
+
+                            <!-- Error Alert -->
+                            @if (errorMessage) {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                {{ errorMessage }}
+                                <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+                            </div>
+                            }
+
+                            <!-- Login Form -->
+                            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                                <!-- Username Field -->
+                                <div class="mb-3">
+                                    <label for="username" class="form-label fw-semibold">
+                                        Username <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0">
+                                            <i class="bi bi-person"></i>
+                                        </span>
+                                        <input type="text" id="username" formControlName="username"
+                                            class="form-control border-start-0 ps-0"
+                                            [class.is-invalid]="isFieldInvalid('username')"
+                                            placeholder="Enter your username" autocomplete="username" />
+                                    </div>
+                                    @if (isFieldInvalid('username')) {
+                                    <div class="invalid-feedback d-block">
+                                        {{ getErrorMessage('username') }}
+                                    </div>
+                                    }
+                                </div>
+
+                                <!-- Password Field -->
+                                <div class="mb-3">
+                                    <label for="password" class="form-label fw-semibold">
+                                        Password <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0">
+                                            <i class="bi bi-lock"></i>
+                                        </span>
+                                        <input [type]="showPassword ? 'text' : 'password'" id="password"
+                                            formControlName="password"
+                                            class="form-control border-start-0 border-end-0 ps-0"
+                                            [class.is-invalid]="isFieldInvalid('password')"
+                                            placeholder="Enter your password" autocomplete="current-password" />
+                                        <span class="input-group-text bg-light border-start-0 cursor-pointer"
+                                            (click)="togglePasswordVisibility()">
+                                            <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                                        </span>
+                                    </div>
+                                    @if (isFieldInvalid('password')) {
+                                    <div class="invalid-feedback d-block">
+                                        {{ getErrorMessage('password') }}
+                                    </div>
+                                    }
+                                </div>
+
+                                <!-- CAPTCHA -->
+                                <div class="mb-3">
+                                    <label for="captcha" class="form-label fw-semibold">
+                                        CAPTCHA <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="captcha-container mb-2">
+                                        <div class="captcha-display">
+                                            <span class="captcha-text">{{ generatedCaptcha }}</span>
+                                        </div>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                            (click)="regenerateCaptcha()" title="Refresh CAPTCHA">
+                                            <i class="bi bi-arrow-clockwise"></i>
+                                        </button>
+                                    </div>
+                                    <input type="text" id="captcha" formControlName="captcha" class="form-control"
+                                        [class.is-invalid]="isFieldInvalid('captcha')"
+                                        placeholder="Enter the characters shown above" autocomplete="off" />
+                                    @if (isFieldInvalid('captcha')) {
+                                    <div class="invalid-feedback d-block">
+                                        {{ getErrorMessage('captcha') }}
+                                    </div>
+                                    }
+                                </div>
+
+                                <!-- Forgot Password Link -->
+                                <div class="text-end mb-3">
+                                    <a routerLink="/forgot-password" class="text-decoration-none text-primary">
+                                        Forgot Password?
+                                    </a>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <button type="submit" class="btn btn-primary w-100 py-3 fw-semibold"
+                                    [disabled]="isLoading">
+                                    @if (isLoading) {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                    Signing In...
+                                    } @else {
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                                    Sign In
+                                    }
+                                </button>
+                            </form>
+
+                            <!-- Divider -->
+                            <div class="divider my-4">
+                                <span class="divider-text text-muted">New to PayFlow?</span>
+                            </div>
+
+                            <!-- Register Link -->
+                            <div class="text-center">
+                                <p class="text-muted mb-2">Don't have an organization account?</p>
+                                <a routerLink="/signup" class="btn btn-outline-primary w-100 py-3 fw-semibold">
+                                    <i class="bi bi-building me-2"></i>
+                                    Register Your Organization
+                                </a>
+                            </div>
+
+                            <!-- Back to Home -->
+                            <div class="text-center mt-4">
+                                <a routerLink="/" class="text-muted text-decoration-none">
+                                    <i class="bi bi-arrow-left me-2"></i>
+                                    Back to Home
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
