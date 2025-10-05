@@ -1,0 +1,143 @@
+<div class="dashboard-container p-3">
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold mb-0">Bank Admin Dashboard</h3>
+            <small class="text-muted">Overview of system statistics and activities</small>
+        </div>
+        <button class="btn btn-primary btn-sm">
+            <i class="bi bi-arrow-repeat me-1"></i> Refresh
+        </button>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-3 p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Organizations</h6>
+                        <h4 class="fw-bold">128</h4>
+                    </div>
+                    <div class="icon-circle bg-primary text-white">
+                        <i class="bi bi-buildings"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-3 p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Pending Verifications</h6>
+                        <h4 class="fw-bold">14</h4>
+                    </div>
+                    <div class="icon-circle bg-warning text-white">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-3 p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Approved Payments</h6>
+                        <h4 class="fw-bold">₹1.25M</h4>
+                    </div>
+                    <div class="icon-circle bg-success text-white">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-3 p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Rejected Requests</h6>
+                        <h4 class="fw-bold">5</h4>
+                    </div>
+                    <div class="icon-circle bg-danger text-white">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Section -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-3 p-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0">Monthly Payment Trends</h6>
+                    <select class="form-select form-select-sm w-auto">
+                        <option>2025</option>
+                        <option>2024</option>
+                    </select>
+                </div>
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-graph-up fs-3"></i>
+                    <p class="mb-0">[Chart Placeholder]</p>
+                    <small>Integrate Chart.js or ApexCharts here later</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-3 p-3">
+                <h6 class="fw-bold mb-3">Verification Status</h6>
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-pie-chart fs-3"></i>
+                    <p class="mb-0">[Pie Chart Placeholder]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Table -->
+    <div class="card shadow-sm border-0 rounded-3 p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0">Recent Activities</h6>
+            <a href="#" class="text-primary small">View All</a>
+        </div>
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">Organization</th>
+                    <th scope="col">Action</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Acme Corp</td>
+                    <td>Salary Disbursement</td>
+                    <td>₹45,000</td>
+                    <td>Oct 03, 2025</td>
+                    <td><span class="badge bg-success">Approved</span></td>
+                </tr>
+                <tr>
+                    <td>FinEdge Pvt Ltd</td>
+                    <td>Payment Request</td>
+                    <td>₹1,20,000</td>
+                    <td>Oct 02, 2025</td>
+                    <td><span class="badge bg-warning text-dark">Pending</span></td>
+                </tr>
+                <tr>
+                    <td>BlueSky Ltd</td>
+                    <td>Salary Disbursement</td>
+                    <td>₹95,000</td>
+                    <td>Sep 29, 2025</td>
+                    <td><span class="badge bg-danger">Rejected</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

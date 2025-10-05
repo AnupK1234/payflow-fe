@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './core/guards/auth.guard';
+import { RoleGuard } from './core/guards/role.guard';
 
 /**
  * Main application routes configuration
@@ -35,12 +37,12 @@ export const routes: Routes = [
   },
 
   // Bank Admin routes - with auth guard
-//   {
-//     path: 'bank-admin',
-//     loadChildren: () => import('./modules/bank-admin/bank-admin.routes').then(m => m.BANK_ADMIN_ROUTES),
-//     // canActivate: [AuthGuard, RoleGuard],
-//     // data: { role: 'BANK_ADMIN' }
-//   },
+  {
+    path: 'bank-admin',
+    loadChildren: () => import('./routes/bank-admin.routes').then(m => m.BANK_ADMIN_ROUTES),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'BANK_ADMIN' }
+  },
 
   // Organization routes - with auth guard
 //   {

@@ -1,0 +1,37 @@
+.navbar {
+    background-color: #fff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dropdown-menu {
+    border-radius: 10px;
+    min-width: 260px;
+    padding: 0.25rem 0;
+}
+
+.dropdown-header {
+    font-size: 0.85rem;
+    background: #f9fafb;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dropdown-item:hover {
+    background-color: #f3f4f6;
+}
+
+.badge {
+    font-size: 0.65rem;
+}
+
+.btn-light:hover {
+    background-color: #f3f4f6;
+}
+
+.rounded-circle {
+    transition: transform 0.2s ease-in-out;
+}
+
+.rounded-circle:hover {
+    transform: scale(1.05);
+}
