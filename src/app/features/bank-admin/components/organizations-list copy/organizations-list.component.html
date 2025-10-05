@@ -1,0 +1,28 @@
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Pending Organizations</h5>
+        <button class="btn btn-sm btn-outline-primary" (click)="loadPending()">Refresh</button>
+    </div>
+
+    <div class="card-body p-0">
+        <div *ngIf="loading" class="p-3">Loading...</div>
+        <div *ngIf="error" class="p-3 text-danger">{{ error }}</div>
+
+        <ul class="list-group list-group-flush" *ngIf="!loading && !error">
+            <li *ngFor="let org of organizations"
+                class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fw-bold">{{ org.name }}</div>
+                    <div class="text-muted small">{{ org.adminEmail || '—' }} • Status: <span
+                            class="badge bg-secondary">{{ org.status }}</span></div>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-outline-success" (click)="open(org)">View</button>
+                </div>
+            </li>
+        </ul>
+
+        <div *ngIf="!loading && organizations.length === 0" class="p-3 text-center text-muted">No pending organizations.
+        </div>
+    </div>
+</div>

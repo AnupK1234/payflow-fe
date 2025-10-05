@@ -1,0 +1,33 @@
+<app-shared-navbar></app-shared-navbar>
+
+<div class="bank-admin-root d-flex vh-100">
+    <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+        <div class="sidebar-header p-3 d-flex align-items-center justify-content-between">
+            <div>
+                <h5 class="m-0">Bank Admin</h5>
+                <small class="text-muted">Dashboard</small>
+            </div>
+            <button class="btn btn-sm btn-link" (click)="toggleSidebar()" aria-label="Toggle sidebar">☰</button>
+        </div>
+
+        <nav class="nav flex-column p-2">
+            <nav class="nav flex-column p-2">
+                <a class="nav-link" routerLink="/bank-admin/dashboard" routerLinkActive="active">Dashboard</a>
+
+                <a class="nav-link" routerLink="/bank-admin/organizations" routerLinkActive="active">All
+                    Organizations</a>
+
+                <a class="nav-link" [routerLink]="['/bank-admin/organizations']" [queryParams]="{ filter: 'pending' }"
+                    routerLinkActive="active">
+                    Pending Verifications
+                </a>
+            </nav>
+
+        </nav>
+    </aside>
+
+    <main class="content flex-grow-1 p-3">
+        <!-- This outlet will render right-side components -->
+        <router-outlet></router-outlet>
+    </main>
+</div>

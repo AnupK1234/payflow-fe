@@ -1,0 +1,26 @@
+<div *ngIf="loading" class="text-center p-4">Loading details...</div>
+
+<div *ngIf="!loading && organization" class="card">
+    <div class="card-header">
+        <h5 class="mb-0">{{ organization?.name }}</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>Admin:</strong> {{ organization?.adminUsername || '—' }} • {{ organization?.adminEmail || '—' }}</p>
+        <p><strong>Address:</strong> {{ organization?.address || '—' }}</p>
+        <p><strong>Status:</strong>
+            <span class="badge" [ngClass]="{
+              'bg-warning': organization?.status === 'PENDING',
+              'bg-success': organization?.status === 'VERIFIED',
+              'bg-danger': organization?.status === 'REJECTED'
+            }">{{ organization?.status }}</span>
+        </p>
+
+        <div class="mt-3">
+            <button class="btn btn-success me-2" (click)="verify(true)" [disabled]="verifying">Approve</button>
+            <button class="btn btn-danger" (click)="verify(false)" [disabled]="verifying">Reject</button>
+        </div>
+        <div *ngIf="error" class="mt-3 text-danger">{{ error }}</div>
+    </div>
+</div>
+
+<div *ngIf="!loading && !organization" class="alert alert-warning">Organization not found.</div>

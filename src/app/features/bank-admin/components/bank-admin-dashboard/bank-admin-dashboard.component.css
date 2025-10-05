@@ -1,0 +1,15 @@
+.dashboard-container {
+    background-color: #f9fafb;
+    border-radius: 8px;
+    min-height: calc(100vh - 100px);
+}
+
+.icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+}
