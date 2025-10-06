@@ -1,26 +1,98 @@
-<div *ngIf="loading" class="text-center p-4">Loading details...</div>
-
-<div *ngIf="!loading && organization" class="card">
-    <div class="card-header">
-        <h5 class="mb-0">{{ organization?.name }}</h5>
+@if (loading) {
+<div class="text-center p-4">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
     </div>
-    <div class="card-body">
-        <p><strong>Admin:</strong> {{ organization?.adminUsername || '—' }} • {{ organization?.adminEmail || '—' }}</p>
-        <p><strong>Address:</strong> {{ organization?.address || '—' }}</p>
-        <p><strong>Status:</strong>
-            <span class="badge" [ngClass]="{
-              'bg-warning': organization?.status === 'PENDING',
-              'bg-success': organization?.status === 'VERIFIED',
-              'bg-danger': organization?.status === 'REJECTED'
-            }">{{ organization?.status }}</span>
-        </p>
+    <p class="mt-2">Loading organization details...</p>
+</div>
+} @else {
+@if (organization) {
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">{{ organization.name }}</h5>
+        <span class="badge px-3 py-2" [ngClass]="{
+            'bg-warning text-dark': organization.status === 'PENDING',
+            'bg-success': organization.status === 'VERIFIED',
+            'bg-danger': organization.status === 'REJECTED'
+          }">
+            {{ organization.status }}
+        </span>
+    </div>
 
-        <div class="mt-3">
-            <button class="btn btn-success me-2" (click)="verify(true)" [disabled]="verifying">Approve</button>
-            <button class="btn btn-danger" (click)="verify(false)" [disabled]="verifying">Reject</button>
+    <div class="card-body">
+        <div class="mb-3">
+            <strong>Registration No:</strong> {{ organization.registrationNumber || '—' }}
         </div>
-        <div *ngIf="error" class="mt-3 text-danger">{{ error }}</div>
+
+        <div class="mb-3">
+            <strong>Admin:</strong> {{ organization.adminUsername || '—' }}
+            <span class="text-muted">({{ organization.adminEmail || '—' }})</span>
+        </div>
+
+        <div class="mb-3">
+            <strong>Address:</strong> {{ organization.address || '—' }}
+        </div>
+
+        <!-- Organization Documents -->
+        <div class="mt-4">
+            <h6>Uploaded Documents</h6>
+            <div class="row g-3">
+                @for (doc of organization.documents; track doc.id) {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card document-card h-100 border">
+                        <img [src]="doc.secureUrl" class="card-img-top" alt="{{ doc.purpose }}"
+                            style="max-height: 160px; object-fit: contain;" />
+                        <div class="card-body p-2">
+                            <p class="card-text text-center small text-muted mb-0">
+                                {{ doc.purpose }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- Collapsible Bank Account Details -->
+        <div class="mt-4">
+            <button class="btn btn-outline-primary btn-sm" type="button" (click)="showBankDetails = !showBankDetails">
+                {{ showBankDetails ? 'Hide' : 'Show' }} Bank Details
+            </button>
+
+            @if (showBankDetails) {
+            <div class="card mt-3 border">
+                <div class="card-body">
+                    @if (organization.bankAccount) {
+                    <p><strong>Account Holder:</strong> {{ organization.bankAccount.holderName }}</p>
+                    <p><strong>Account Number:</strong> {{ organization.bankAccount.accountNumber }}</p>
+                    <p><strong>IFSC Code:</strong> {{ organization.bankAccount.ifsc }}</p>
+                    <p><strong>Bank Name:</strong> {{ organization.bankAccount.bankName }}</p>
+                    } @else {
+                    <p class="text-muted mb-0">No bank account details available.</p>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-4">
+            <button class="btn btn-success me-2" (click)="verify(true)" [disabled]="verifying">
+                Approve
+            </button>
+            <button class="btn btn-danger" (click)="verify(false)" [disabled]="verifying">
+                Reject
+            </button>
+        </div>
+
+        @if (error) {
+        <div class="alert alert-danger mt-3">{{ error }}</div>
+        }
     </div>
 </div>
-
-<div *ngIf="!loading && !organization" class="alert alert-warning">Organization not found.</div>
+} @else {
+<div class="alert alert-warning text-center">
+    Organization not found.
+</div>
+}
+}

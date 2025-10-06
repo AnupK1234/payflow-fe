@@ -31,11 +31,14 @@ export const BANK_ADMIN_ROUTES: Routes = [
       //     loadComponent: () => import('./pages/organizations/organization-form.component').then(m => m.OrganizationFormComponent),
       //     title: 'Create Organization - Bank Admin'
       //   },
-      //   {
-      //     path: 'organizations/:id',
-      //     loadComponent: () => import('./pages/organizations/organization-detail.component').then(m => m.OrganizationDetailComponent),
-      //     title: 'Organization Details - Bank Admin'
-      //   },
+      {
+        path: 'organizations/:id',
+        loadComponent: () =>
+          import(
+            '../features/bank-admin/components/organization-detail/organization-detail.component'
+          ).then((m) => m.OrganizationDetailComponent),
+        title: 'Organization Details - Bank Admin',
+      },
       //   {
       //     path: 'organizations/:id/edit',
       //     loadComponent: () => import('./pages/organizations/organization-form.component').then(m => m.OrganizationFormComponent),
