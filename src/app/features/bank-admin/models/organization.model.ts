@@ -1,4 +1,5 @@
 export interface Organization {
+  bankAccount: any;
   id: number;
   name: string;
   address?: string | null;
