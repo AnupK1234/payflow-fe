@@ -42,7 +42,8 @@
                         <span class="badge" [ngClass]="{
                     'bg-success': org.status === 'VERIFIED',
                     'bg-warning text-dark': org.status === 'PENDING',
-                    'bg-danger': org.status === 'REJECTED'
+                    'bg-danger': org.status === 'REJECTED',
+                    'bg-warning': org.status === 'SUSPENDED'
                   }">
                             {{ org.status }}
                         </span>

@@ -59,4 +59,35 @@ export class OrganizationDetailComponent implements OnInit {
       },
     });
   }
+
+  updateStatus(newStatus: 'VERIFIED' | 'SUSPENDED'): void {
+    if (!this.organization) return;
+
+    // Prevent action if status is already the target status
+    if (this.organization.status === newStatus) {
+      this.error = `Organization is already ${newStatus}.`;
+      return;
+    }
+
+    this.verifying = true; // Reusing this flag for all actions
+    this.error = '';
+
+    const organizationId = this.organization.id;
+
+    // Calls the PUT /organizations/{id}/status endpoint
+    this.service.updateOrganizationStatus(organizationId, newStatus).subscribe({
+      next: (updatedOrg) => {
+        this.verifying = false;
+        // Update the local component state with the new organization data
+        this.organization = updatedOrg; 
+      },
+      error: (err) => {
+        this.verifying = false;
+        // Extract a meaningful message from the error (like the IllegalStateException message)
+        const errorMessage = err.error?.message || 'Status update failed';
+        this.error = errorMessage;
+        console.error(err);
+      },
+    });
+  }
 }
