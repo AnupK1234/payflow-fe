@@ -35,7 +35,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
     title: 'Reset Password - PayFlow'
   },
-
+  
   // Bank Admin routes - with auth guard
   {
     path: 'bank-admin',
