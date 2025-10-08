@@ -54,11 +54,14 @@ export const BANK_ADMIN_ROUTES: Routes = [
       //     loadComponent: () => import('./pages/payment-requests/payment-request-detail.component').then(m => m.PaymentRequestDetailComponent),
       //     title: 'Payment Request Details - Bank Admin'
       //   },
-      //   {
-      //     path: 'salary-requests',
-      //     loadComponent: () => import('./pages/salary-requests/salary-requests-list.component').then(m => m.SalaryRequestsListComponent),
-      //     title: 'Salary Requests - Bank Admin'
-      //   },
+      {
+        path: 'salary-requests',
+        loadComponent: () =>
+          import(
+            '../features/bank-admin/components/salary-requests-list/salary-requests-list.component'
+          ).then((m) => m.SalaryRequestsListComponent),
+        title: 'Salary Requests - Bank Admin',
+      },
       //   {
       //     path: 'salary-requests/:id',
       //     loadComponent: () => import('./pages/salary-requests/salary-request-detail.component').then(m => m.SalaryRequestDetailComponent),
