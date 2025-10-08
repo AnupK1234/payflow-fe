@@ -1,4 +1,5 @@
 export interface Organization {
+  suspended: boolean;
   bankAccount: any;
   id: number;
   name: string;
@@ -10,3 +11,5 @@ export interface Organization {
   adminUsername?: string | null;
   adminEmail?: string | null;
 }
+
+export type OrganizationStatus = 'PENDING' | 'VERIFIED' | 'REJECTED' | 'SUSPENDED';

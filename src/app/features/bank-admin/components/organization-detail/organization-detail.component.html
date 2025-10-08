@@ -13,7 +13,8 @@
         <span class="badge px-3 py-2" [ngClass]="{
             'bg-warning text-dark': organization.status === 'PENDING',
             'bg-success': organization.status === 'VERIFIED',
-            'bg-danger': organization.status === 'REJECTED'
+            'bg-danger': organization.status === 'REJECTED',
+            'bg-warning': organization.status === 'SUSPENDED'
           }">
             {{ organization.status }}
         </span>
@@ -77,13 +78,40 @@
 
         <!-- Action Buttons -->
         <div class="mt-4">
-            <button class="btn btn-success me-2" (click)="verify(true)" [disabled]="verifying">
-                Approve
-            </button>
-            <button class="btn btn-danger" (click)="verify(false)" [disabled]="verifying">
-                Reject
-            </button>
+            
+            @if (organization.status === 'PENDING') {
+                <button class="btn btn-success me-2" (click)="verify(true)" [disabled]="verifying">
+                    Approve
+                </button>
+                <button class="btn btn-danger" (click)="verify(false)" [disabled]="verifying">
+                    Reject
+                </button>
+            } 
+            
+            @else if (organization.status === 'VERIFIED') {
+                <button class="btn btn-warning me-2" 
+                        (click)="updateStatus('SUSPENDED')" 
+                        [disabled]="verifying">
+                    <i class="bi bi-pause-circle me-1"></i> Suspend Organization
+                </button>
+            } 
+            
+            @else if (organization.status === 'SUSPENDED') {
+                <button class="btn btn-primary me-2" 
+                        (click)="updateStatus('VERIFIED')" 
+                        [disabled]="verifying">
+                    <i class="bi bi-play-circle me-1"></i> Unsuspend (Set to Verified)
+                </button>
+            }
+            
+            @if (verifying) {
+                <span class="spinner-border spinner-border-sm text-primary ms-3" role="status" aria-hidden="true"></span>
+            }
         </div>
+        
+        @if (error) {
+        <div class="alert alert-danger mt-3">{{ error }}</div>
+        }
 
         @if (error) {
         <div class="alert alert-danger mt-3">{{ error }}</div>
