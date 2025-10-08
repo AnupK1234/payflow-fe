@@ -1,29 +1,33 @@
 <app-shared-navbar></app-shared-navbar>
 
 <div class="bank-admin-root d-flex vh-100">
+    <!-- Sidebar -->
     <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+        @if (!sidebarCollapsed) {
         <div class="sidebar-header p-3 d-flex align-items-center justify-content-between">
             <div>
                 <h5 class="m-0">Bank Admin</h5>
                 <small class="text-muted">Dashboard</small>
             </div>
-            <button class="btn btn-sm btn-link" (click)="toggleSidebar()" aria-label="Toggle sidebar">☰</button>
+            <button class="btn btn-sm btn-link" (click)="toggleSidebar()" aria-label="Collapse sidebar">☰</button>
         </div>
 
         <nav class="nav flex-column p-2">
-            <nav class="nav flex-column p-2">
-                <a class="nav-link" routerLink="/bank-admin/dashboard" routerLinkActive="active">Dashboard</a>
-
-                <a class="nav-link" routerLink="/bank-admin/organizations" routerLinkActive="active">All
-                    Organizations</a>
-                <a class="nav-link" routerLink="/bank-admin/salary-requests" routerLinkActive="active">Salary Diburesement Request</a>
-            </nav>
-
+            <a class="nav-link" routerLink="/bank-admin/dashboard" routerLinkActive="active">Dashboard</a>
+            <a class="nav-link" routerLink="/bank-admin/organizations" routerLinkActive="active">All Organizations</a>
+            <a class="nav-link" routerLink="/bank-admin/salary-requests" routerLinkActive="active">Salary Disbursement
+                Request</a>
+            <a class="nav-link" routerLink="/bank-admin/deposit-request" routerLinkActive="active">Deposit
+                Request</a>
         </nav>
+        } @else {
+        <button class="btn btn-link m-2" (click)="toggleSidebar()" aria-label="Open sidebar">☰</button>
+        }
     </aside>
 
+    <!-- Main content area -->
     <main class="content flex-grow-1 p-3">
-        <!-- This outlet will render right-side components -->
         <router-outlet></router-outlet>
     </main>
+
 </div>
