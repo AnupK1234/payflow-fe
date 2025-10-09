@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-forgot-password',
@@ -26,6 +27,11 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   otpTimer = 0;
   otpInterval: any;
   userEmail = '';
+  verifiedOtp = ''; // ✅ Store verified OTP
+
+  @ViewChild('otpInput') otpInput!: ElementRef;
+
+  private baseUrl = 'http://localhost:8080/api/auth';
 
   constructor(private fb: FormBuilder, private router: Router, private http: HttpClient) {}
 
@@ -47,9 +53,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
         newPassword: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: ['', [Validators.required]],
       },
-      {
-        validators: this.passwordMatchValidator,
-      }
+      { validators: this.passwordMatchValidator }
     );
   }
 
@@ -59,7 +63,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
-  // Step 1: Request OTP
+  /** Step 1: Request OTP */
   requestOTP(): void {
     if (this.emailForm.invalid) {
       this.markFormGroupTouched(this.emailForm);
@@ -68,27 +72,26 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.errorMessage = '';
-
     const email = this.emailForm.value.email;
     this.userEmail = email;
 
     this.http
-      .post('http://localhost:8080/api/auth/forgot-password', { email })
+      .post(`${this.baseUrl}/forgot-password`, { email }, { responseType: 'text' })
+      .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: (response: any) => {
-          this.isLoading = false;
-          this.successMessage = 'OTP sent successfully to your email!';
+        next: (res: string) => {
+          this.successMessage = res;
           this.currentStep = 'otp';
           this.startOtpTimer();
+          setTimeout(() => this.otpInput.nativeElement.focus(), 0);
         },
-        error: (error) => {
-          this.isLoading = false;
-          this.errorMessage = error.error?.message || 'Failed to send OTP. Please try again.';
+        error: (err) => {
+          this.errorMessage = typeof err.error === 'string' ? err.error : err.error?.message || 'Failed to send OTP';
         },
       });
   }
 
-  // Step 2: Verify OTP
+  /** Step 2: Verify OTP */
   verifyOTP(): void {
     if (this.otpForm.invalid) {
       this.markFormGroupTouched(this.otpForm);
@@ -97,74 +100,69 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.errorMessage = '';
+    const data = { email: this.userEmail, otp: this.otpForm.value.otp };
 
-    const data = {
-      email: this.userEmail,
-      otp: this.otpForm.value.otp,
-    };
+    this.http
+      .post(`${this.baseUrl}/verify-otp`, data, { responseType: 'text' })
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (res: string) => {
+          this.successMessage = res;
+          this.currentStep = 'password';
+          this.clearOtpTimer();
 
-    this.http.post('http://localhost:8080/api/auth/forgot-password/verify-otp', data).subscribe({
-      next: (response: any) => {
-        this.isLoading = false;
-        this.successMessage = 'OTP verified successfully!';
-        this.currentStep = 'password';
-        this.clearOtpTimer();
-      },
-      error: (error) => {
-        this.isLoading = false;
-        this.errorMessage = error.error?.message || 'Invalid OTP. Please try again.';
-      },
-    });
+          // ✅ Save OTP for reset step
+          this.verifiedOtp = this.otpForm.value.otp;
+        },
+        error: (err) => {
+          this.errorMessage = typeof err.error === 'string' ? err.error : err.error?.message || 'Invalid OTP';
+        },
+      });
   }
 
-  // Step 3: Reset Password
+  /** Step 3: Reset Password */
   resetPassword(): void {
     if (this.passwordForm.invalid) {
       this.markFormGroupTouched(this.passwordForm);
       return;
     }
 
+    if (!this.verifiedOtp) {
+      this.errorMessage = 'OTP not verified or expired. Please resend OTP.';
+      return;
+    }
+
     this.isLoading = true;
     this.errorMessage = '';
 
-    const data = {
-      email: this.userEmail,
-      newPassword: this.passwordForm.value.newPassword,
-    };
+    const data = { email: this.userEmail, otp: this.verifiedOtp, newPassword: this.passwordForm.value.newPassword };
 
     this.http
-      .post('http://localhost:8080/api/auth/forgot-password/reset-password', data)
+      .post(`${this.baseUrl}/reset-password`, data, { responseType: 'text' })
+      .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: (response: any) => {
-          this.isLoading = false;
-          this.successMessage = 'Password reset successful! Redirecting to login...';
-
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 2000);
+        next: (res: string) => {
+          this.successMessage = res;
+          this.verifiedOtp = ''; // clear OTP after success
+          setTimeout(() => this.router.navigate(['/login']), 2000);
         },
-        error: (error) => {
-          this.isLoading = false;
-          this.errorMessage = error.error?.message || 'Failed to reset password. Please try again.';
+        error: (err) => {
+          this.errorMessage = typeof err.error === 'string' ? err.error : err.error?.message || 'Failed to reset password';
         },
       });
   }
 
-  // OTP Timer Functions
+  /** OTP Timer */
   startOtpTimer(): void {
-    this.otpTimer = 300; // 5 minutes = 300 seconds
+    this.otpTimer = 300;
     this.otpInterval = setInterval(() => {
       this.otpTimer--;
-      if (this.otpTimer <= 0) {
-        this.clearOtpTimer();
-      }
+      if (this.otpTimer <= 0) this.clearOtpTimer();
     }, 1000);
   }
 
   clearOtpTimer(): void {
-    if (this.otpInterval) {
-      clearInterval(this.otpInterval);
-    }
+    if (this.otpInterval) clearInterval(this.otpInterval);
     this.otpTimer = 0;
   }
 
@@ -177,15 +175,13 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   resendOTP(): void {
     this.otpForm.reset();
     this.clearOtpTimer();
+    this.verifiedOtp = '';
     this.requestOTP();
   }
 
   togglePasswordVisibility(field: 'new' | 'confirm'): void {
-    if (field === 'new') {
-      this.showNewPassword = !this.showNewPassword;
-    } else {
-      this.showConfirmPassword = !this.showConfirmPassword;
-    }
+    if (field === 'new') this.showNewPassword = !this.showNewPassword;
+    else this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   goBack(): void {
@@ -202,10 +198,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   }
 
   private markFormGroupTouched(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach((key) => {
-      const control = formGroup.get(key);
-      control?.markAsTouched();
-    });
+    Object.keys(formGroup.controls).forEach((key) => formGroup.get(key)?.markAsTouched());
   }
 
   isFieldInvalid(formGroup: FormGroup, fieldName: string): boolean {
@@ -215,21 +208,13 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
   getErrorMessage(formGroup: FormGroup, fieldName: string): string {
     const field = formGroup.get(fieldName);
-    if (field?.hasError('required')) {
-      return `${this.getFieldLabel(fieldName)} is required`;
-    }
-    if (field?.hasError('email')) {
-      return 'Please enter a valid email address';
-    }
+    if (field?.hasError('required')) return `${this.getFieldLabel(fieldName)} is required`;
+    if (field?.hasError('email')) return 'Please enter a valid email address';
     if (field?.hasError('minlength')) {
       const minLength = field.errors?.['minlength'].requiredLength;
       return `${this.getFieldLabel(fieldName)} must be at least ${minLength} characters`;
     }
-    if (field?.hasError('pattern')) {
-      if (fieldName === 'otp') {
-        return 'OTP must be exactly 6 digits';
-      }
-    }
+    if (field?.hasError('pattern') && fieldName === 'otp') return 'OTP must be exactly 6 digits';
     return '';
   }
 
