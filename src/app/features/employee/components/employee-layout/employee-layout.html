@@ -1,0 +1,24 @@
+<app-shared-navbar></app-shared-navbar>
+
+<div class="employee-root d-flex vh-100">
+  <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <div class="sidebar-header p-3 d-flex align-items-center justify-content-between">
+      <div>
+        <h5 class="m-0">Employee</h5>
+        <small class="text-muted">Dashboard</small>
+      </div>
+      <button class="btn btn-sm btn-link" (click)="toggleSidebar()" aria-label="Toggle sidebar">☰</button>
+    </div>
+
+    <nav class="nav flex-column p-2">
+      <a class="nav-link" routerLink="/employee/dashboard" routerLinkActive="active">Dashboard</a>
+      <a class="nav-link" routerLink="/employee/salary-history" routerLinkActive="active">Salary History</a>
+      <a class="nav-link" routerLink="/employee/update-account" routerLinkActive="active">Update Bank Account</a>
+    </nav>
+  </aside>
+
+  <main class="content flex-grow-1 p-3">
+    <!-- Render selected employee component here -->
+    <router-outlet></router-outlet>
+  </main>
+</div>

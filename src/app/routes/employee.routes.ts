@@ -57,3 +57,23 @@
 //     ]
 //   }
 // ];
+
+
+import { Routes } from '@angular/router';
+import { EmployeeLayoutComponent } from '../features/employee/components/employee-layout/employee-layout';
+import { EmployeeDashboardComponent } from '../features/employee/components/employee-dashboard/employee-dashboard';
+import { EmployeeSalaryHistoryComponent } from '../features/employee/components/employee-salary-history/employee-salary-history';
+import { UpdateAccountComponent } from '../features/employee/components/update-account/update-account';
+
+export const EMPLOYEE_ROUTES: Routes = [
+  {
+    path: '',
+    component: EmployeeLayoutComponent,
+    children: [
+      { path: 'dashboard', component: EmployeeDashboardComponent },
+      { path: 'salary-history', component: EmployeeSalaryHistoryComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+       { path: 'update-account', component: UpdateAccountComponent } 
+    ]
+  }
+];
