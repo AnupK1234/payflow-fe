@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { EmployeeSelfService } from '../../services/employee-self';
 import { SalaryAccountUpdateRequestDTO } from '../../models/salary-account-update-request.model';
 
@@ -13,7 +13,9 @@ import { SalaryAccountUpdateRequestDTO } from '../../models/salary-account-updat
 })
 export class UpdateAccountComponent implements OnInit {
   salaryAccountForm!: FormGroup;
-  updating = false;
+  updatingFlag = false;
+  status: 'idle' | 'success' | 'error' = 'idle';
+  message: string = '';
 
   constructor(private fb: FormBuilder, private service: EmployeeSelfService) {}
 
@@ -25,23 +27,49 @@ export class UpdateAccountComponent implements OnInit {
     });
   }
 
+  // Check if a form control is invalid
+  isInvalid(controlName: string): boolean {
+    const control = this.salaryAccountForm.get(controlName);
+    return control ? control.invalid && (control.dirty || control.touched) : false;
+  }
+
+  // Return status message for template
+  statusMessage(): string {
+    return this.message;
+  }
+
+  // Return submission status for template
+  submissionStatus(): 'success' | 'error' | 'idle' {
+    return this.status;
+  }
+
+  // Return whether the form is updating
+  updating(): boolean {
+    return this.updatingFlag;
+  }
+
   submitAccountUpdate(): void {
     if (this.salaryAccountForm.invalid) {
       this.salaryAccountForm.markAllAsTouched();
       return;
     }
 
-    this.updating = true;
+    this.updatingFlag = true;
+    this.status = 'idle';
+    this.message = '';
+
     const payload: SalaryAccountUpdateRequestDTO = this.salaryAccountForm.value;
 
     this.service.requestSalaryAccountUpdate(payload).subscribe({
       next: (res) => {
-        alert(res);
-        this.updating = false;
+        this.updatingFlag = false;
+        this.status = 'success';
+        this.message = 'Bank account updated successfully!';
         this.salaryAccountForm.reset();
       },
       error: (err) => {
-        this.updating = false;
+        this.updatingFlag = false;
+        this.status = 'error';
 
         if (err.error?.message) {
           const messages: string[] = err.error.message
@@ -51,32 +79,23 @@ export class UpdateAccountComponent implements OnInit {
 
           // Clear previous server errors
           ['accountNumber', 'ifscCode', 'bankName'].forEach(field => {
-            const errors = this.salaryAccountForm.controls[field].errors || {};
-            delete errors['serverError'];
-            this.salaryAccountForm.controls[field].setErrors(
-              Object.keys(errors).length ? errors : null
-            );
+            const control = this.salaryAccountForm.get(field);
+            if (control) {
+              const errors = { ...control.errors };
+              delete errors['serverError'];
+              control.setErrors(Object.keys(errors).length ? errors : null);
+            }
           });
 
-          // Assign only the highest-priority message per field
-          messages.forEach((msg: string) => {
+          // Assign server errors to specific fields
+          messages.forEach(msg => {
             const lower = msg.toLowerCase();
-
             if (lower.includes('account number')) {
-              const control = this.salaryAccountForm.controls['accountNumber'];
-              if (!control.errors?.['serverError']) {
-                control.setErrors({ ...control.errors, serverError: msg });
-              }
+              this.addServerError('accountNumber', msg);
             } else if (lower.includes('ifsc')) {
-              const control = this.salaryAccountForm.controls['ifscCode'];
-              if (!control.errors?.['serverError']) {
-                control.setErrors({ ...control.errors, serverError: msg });
-              }
+              this.addServerError('ifscCode', msg);
             } else if (lower.includes('bank')) {
-              const control = this.salaryAccountForm.controls['bankName'];
-              if (!control.errors?.['serverError']) {
-                control.setErrors({ ...control.errors, serverError: msg });
-              }
+              this.addServerError('bankName', msg);
             }
           });
         }
@@ -85,9 +104,11 @@ export class UpdateAccountComponent implements OnInit {
       }
     });
   }
+
+  private addServerError(controlName: string, message: string) {
+    const control: AbstractControl | null = this.salaryAccountForm.get(controlName);
+    if (control && !control.errors?.['serverError']) {
+      control.setErrors({ ...control.errors, serverError: message });
+    }
+  }
 }
-
-
-
-
-
