@@ -13,7 +13,7 @@ import { CookieService } from 'ngx-cookie-service';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly apiUrl = environment.apiUrl;
+  private readonly apiUrl = environment.apiUrl + '/auth';
 
   constructor(
     private http: HttpClient,
@@ -22,7 +22,7 @@ export class AuthService {
   ) {}
 
   login(credentials: LoginRequest): Observable<User> {
-    return this.http.post<LoginResponse>(this.apiUrl + '/auth/login', credentials).pipe(
+    return this.http.post<LoginResponse>(this.apiUrl + '/login', credentials).pipe(
       tap((response) => this.storeAuthData(response)),
       map((response) => response.user),
       catchError(this.handleError)
@@ -73,5 +73,32 @@ export class AuthService {
     }
   }
 
-  // Add methods for logout, checking authentication status, etc. here in the future
+  requestPasswordResetOtp(email: string): Observable<string> {
+    const data: OtpRequest = { email };
+    return this.http.post<string>(`${this.apiUrl}/forgot-password`, data, {
+      responseType: 'text' as 'json',
+    });
+  }
+
+  verifyOtp(email: string, otp: string): Observable<string> {
+    const data: OtpVerificationRequest = { email, otp };
+    return this.http.post<string>(`${this.apiUrl}/verify-otp`, data, {
+      responseType: 'text' as 'json',
+    });
+  }
+
+  resetPassword(data: PasswordResetRequest): Observable<string> {
+    return this.http.post<string>(`${this.apiUrl}/reset-password`, data, {
+      responseType: 'text' as 'json',
+    });
+  }
+
+  formatError(error: any): string {
+    try {
+      const errorBody = JSON.parse(error.error);
+      return errorBody?.message || 'An unknown error occurred.';
+    } catch (e) {
+      return error.error || 'Failed to communicate with the server.';
+    }
+  }
 }
