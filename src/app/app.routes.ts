@@ -43,6 +43,13 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { role: 'BANK_ADMIN' }
   },
+  {
+  path: 'employee',
+  loadChildren: () => import('./routes/employee.routes').then(m => m.EMPLOYEE_ROUTES),
+  canActivate: [AuthGuard, RoleGuard],
+  data: { role: 'EMPLOYEE' }
+},
+
 
   // Organization routes - with auth guard
 //   {

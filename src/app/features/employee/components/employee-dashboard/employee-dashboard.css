@@ -1,0 +1,15 @@
+.container {
+  max-width: 900px;
+}
+
+table {
+  font-size: 0.9rem;
+}
+
+h2, h4 {
+  margin-bottom: 20px;
+}
+
+.btn {
+  min-width: 120px;
+}

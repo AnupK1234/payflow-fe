@@ -1,0 +1,44 @@
+<div class="container mt-4">
+  <h2>Salary History</h2>
+
+  <div *ngIf="loading" class="text-center p-4">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2">Loading salary history...</p>
+  </div>
+
+  <div *ngIf="!loading && salaryHistory.length > 0">
+    <table class="table table-striped mt-3">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Basic</th>
+          <th>HRA</th>
+          <th>Allowances</th>
+          <th>Deductions</th>
+          <th>Net Salary</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of salaryHistory">
+          <td>{{ s.id }}</td>
+          <td>{{ s.basic }}</td>
+          <td>{{ s.hra }}</td>
+          <td>{{ s.allowances }}</td>
+          <td>{{ s.deductions }}</td>
+          <td>{{ s.netSalary }}</td>
+          <td>{{ s.startDate | date: 'mediumDate' }}</td>
+          <td>{{ s.endDate ? (s.endDate | date: 'mediumDate') : '-' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button class="btn btn-primary me-2" (click)="downloadPdf()">Download PDF</button>
+    <button class="btn btn-secondary" (click)="downloadCsv()">Download CSV</button>
+  </div>
+
+  <div *ngIf="!loading && salaryHistory.length === 0" class="text-muted mt-3">
+    No salary records found.
+  </div>
+</div>
