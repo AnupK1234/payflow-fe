@@ -3,7 +3,6 @@
 
   <form [formGroup]="salaryAccountForm" (ngSubmit)="submitAccountUpdate()" class="p-4 shadow-sm bg-light rounded">
 
-    <!-- Account Number -->
     <div class="mb-3">
       <label for="accountNumber" class="form-label">Account Number</label>
       <input type="text" id="accountNumber" class="form-control"
@@ -18,7 +17,6 @@
       </div>
     </div>
 
-    <!-- IFSC Code -->
     <div class="mb-3">
       <label for="ifscCode" class="form-label">IFSC Code</label>
       <input type="text" id="ifscCode" class="form-control"
@@ -33,7 +31,7 @@
       </div>
     </div>
 
-    <!-- Bank Name -->
+
     <div class="mb-3">
       <label for="bankName" class="form-label">Bank Name</label>
       <input type="text" id="bankName" class="form-control"
@@ -48,7 +46,6 @@
       </div>
     </div>
 
-    <!-- Submission Status -->
     <div *ngIf="statusMessage()" 
          [class.text-success]="submissionStatus() === 'success'"
          [class.text-danger]="submissionStatus() === 'error'" 
@@ -56,7 +53,7 @@
       {{ statusMessage() }}
     </div>
 
-    <!-- Submit Button -->
+   
     <div class="text-center">
       <button type="submit" class="btn btn-primary" [disabled]="updating() || salaryAccountForm.invalid">
         {{ updating() ? 'Updating...' : 'Submit Update Request' }}

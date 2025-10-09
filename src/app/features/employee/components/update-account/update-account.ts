@@ -27,23 +27,22 @@ export class UpdateAccountComponent implements OnInit {
     });
   }
 
-  // Check if a form control is invalid
   isInvalid(controlName: string): boolean {
     const control = this.salaryAccountForm.get(controlName);
     return control ? control.invalid && (control.dirty || control.touched) : false;
   }
 
-  // Return status message for template
+  
   statusMessage(): string {
     return this.message;
   }
 
-  // Return submission status for template
+
   submissionStatus(): 'success' | 'error' | 'idle' {
     return this.status;
   }
 
-  // Return whether the form is updating
+ 
   updating(): boolean {
     return this.updatingFlag;
   }
@@ -77,7 +76,7 @@ export class UpdateAccountComponent implements OnInit {
             .map((m: string) => m.trim())
             .filter(Boolean);
 
-          // Clear previous server errors
+
           ['accountNumber', 'ifscCode', 'bankName'].forEach(field => {
             const control = this.salaryAccountForm.get(field);
             if (control) {
@@ -87,7 +86,7 @@ export class UpdateAccountComponent implements OnInit {
             }
           });
 
-          // Assign server errors to specific fields
+
           messages.forEach(msg => {
             const lower = msg.toLowerCase();
             if (lower.includes('account number')) {
