@@ -64,6 +64,7 @@ import { EmployeeLayoutComponent } from '../features/employee/components/employe
 import { EmployeeDashboardComponent } from '../features/employee/components/employee-dashboard/employee-dashboard';
 import { EmployeeSalaryHistoryComponent } from '../features/employee/components/employee-salary-history/employee-salary-history';
 import { UpdateAccountComponent } from '../features/employee/components/update-account/update-account';
+import { RaiseConcernComponent } from '../features/employee/components/raise-concern/raise-concern';
 
 export const EMPLOYEE_ROUTES: Routes = [
   {
@@ -73,7 +74,8 @@ export const EMPLOYEE_ROUTES: Routes = [
       { path: 'dashboard', component: EmployeeDashboardComponent },
       { path: 'salary-history', component: EmployeeSalaryHistoryComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-       { path: 'update-account', component: UpdateAccountComponent } 
+       { path: 'update-account', component: UpdateAccountComponent } ,
+       { path: 'raise-concern', component: RaiseConcernComponent }
     ]
   }
 ];

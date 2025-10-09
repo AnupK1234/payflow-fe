@@ -9,7 +9,6 @@ import { SalaryAccountUpdateRequestDTO } from '../models/salary-account-update-r
 })
 export class EmployeeSelfService {
 
-  //private baseUrl = '/api/employee/self';
   private baseUrl = 'http://localhost:8080/api/employee/self';
 
   constructor(private http: HttpClient) { }
@@ -52,5 +51,16 @@ export class EmployeeSelfService {
 
   requestSalaryAccountUpdate(payload: SalaryAccountUpdateRequestDTO): Observable<string> {
     return this.http.post<string>(`${this.baseUrl}/salary-account/update-request`, payload);
+  }
+
+  // --- NEW: Raise Concern ---
+  raiseConcern(payload: { title: string; description: string }, file?: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(payload));
+    if (file) {
+      formData.append('attachment', file);
+    }
+
+    return this.http.post<string>(`${this.baseUrl}/raise-concern`, formData);
   }
 }
