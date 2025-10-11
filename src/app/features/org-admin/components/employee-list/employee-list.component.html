@@ -196,10 +196,7 @@
                 <th class="px-4 py-3">Employee</th>
                 <th class="py-3">Email</th>
                 <th class="py-3">Department</th>
-                <th class="py-3">Designation</th>
-                <th class="py-3">Joined Date</th>
                 <th class="py-3">Status</th>
-                <th class="py-3">Salary</th>
                 <th class="py-3 text-center">Actions</th>
               </tr>
             </thead>
@@ -229,12 +226,9 @@
               <tr>
                 <td class="px-4 py-3">
                   <div class="d-flex align-items-center">
-                    <div class="avatar-circle me-3">
-                      {{ employee?.firstName?.charAt(0) }}{{ employee?.lastName?.charAt(0) }}
-                    </div>
                     <div>
-                      <div class="fw-semibold">{{ employee.firstName }} {{ employee.lastName }}</div>
-                      <small class="text-muted">ID: #{{ employee.id }}</small>
+                      <small class="text-muted me-2">#{{ employee.id }}</small>
+                      <span class="fw-semibold">{{ employee.fullName }}</span>
                     </div>
                   </div>
                 </td>
@@ -245,11 +239,6 @@
                 <td class="py-3">
                   <span class="badge bg-light text-dark">{{ employee.department }}</span>
                 </td>
-                <td class="py-3">{{ employee.designation }}</td>
-                <td class="py-3">
-                  <i class="bi bi-calendar3 text-muted me-2"></i>
-                  <small>{{ formatDate(employee.dateOfJoining) }}</small>
-                </td>
                 <td class="py-3">
                   <span class="badge {{ getStatusBadgeClass(employee.status) }}">
                     <i class="bi" [class.bi-check-circle]="employee.status === 'ACTIVE'"
@@ -257,25 +246,18 @@
                     {{ employee.status }}
                   </span>
                 </td>
-                <td class="py-3">
-                  @if (employee.salary) {
-                  <span class="fw-bold text-success">{{ formatCurrency(employee.salary.total) }}</span>
-                  } @else {
-                  <span class="text-muted">Not set</span>
-                  }
-                </td>
                 <td class="py-3 text-center">
                   <div class="btn-group btn-group-sm" role="group">
                     <button class="btn btn-outline-primary" (click)="navigateToView(employee.id)" title="View Details">
                       <i class="bi bi-eye"></i>
                     </button>
-                    <button class="btn btn-outline-secondary" (click)="navigateToEdit(employee.id)"
+                    <!-- <button class="btn btn-outline-secondary" (click)="navigateToEdit(employee.id)"
                       title="Edit Employee">
                       <i class="bi bi-pencil"></i>
                     </button>
                     <button class="btn btn-outline-info" (click)="navigateToSalary(employee.id)" title="Manage Salary">
                       <i class="bi bi-currency-rupee"></i>
-                    </button>
+                    </button> -->
                     <button class="btn btn-outline-danger" (click)="openDeleteModal(employee)" title="Delete Employee">
                       <i class="bi bi-trash"></i>
                     </button>
@@ -363,10 +345,10 @@
         <div class="employee-info bg-light p-3 rounded">
           <div class="d-flex align-items-center mb-2">
             <div class="avatar-circle me-3">
-              {{ selectedEmployee.firstName.charAt(0) }}{{ selectedEmployee.lastName.charAt(0) }}
+              {{ selectedEmployee.fullName}}
             </div>
             <div>
-              <div class="fw-bold">{{ selectedEmployee.firstName }} {{ selectedEmployee.lastName }}</div>
+              <div class="fw-bold">{{ selectedEmployee.fullName }}</div>
               <small class="text-muted">{{ selectedEmployee.email }}</small>
             </div>
           </div>
@@ -374,9 +356,6 @@
           <div class="row g-2 small">
             <div class="col-6">
               <strong>Department:</strong> {{ selectedEmployee.department }}
-            </div>
-            <div class="col-6">
-              <strong>Designation:</strong> {{ selectedEmployee.designation }}
             </div>
             <div class="col-6">
               <strong>Status:</strong>
@@ -395,13 +374,10 @@
           Cancel
         </button>
         <button type="button" class="btn btn-danger" (click)="confirmDelete()" [disabled]="isLoading">
-          @if (isLoading) {
-          <span class="spinner-border spinner-border-sm me-2"></span>
-          Deleting...
-          } @else {
+
           <i class="bi bi-trash me-2"></i>
           Delete Employee
-          }
+
         </button>
       </div>
     </div>

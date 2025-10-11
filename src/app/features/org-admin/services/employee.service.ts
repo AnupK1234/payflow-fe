@@ -5,8 +5,7 @@ import { environment } from '../../../../environments/environment';
 
 export interface Employee {
   id: number;
-  firstName: string;
-  lastName: string;
+  fullName: string;
   email: string;
   phoneNumber: string;
   department: string;
