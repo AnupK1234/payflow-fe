@@ -1,0 +1,433 @@
+<div class="employee-create-container">
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+
+        <!-- Header -->
+        <div class="text-center mb-4">
+          <h2 class="fw-bold mb-2">
+            <i class="bi bi-person-plus text-primary me-2"></i>
+            Add New Employee
+          </h2>
+          <p class="text-muted">Fill in the employee details below</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container mb-4">
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar bg-primary" [style.width.%]="getProgressPercentage()"
+              style="transition: width 0.3s ease;">
+            </div>
+          </div>
+          <div class="d-flex justify-content-between mt-3">
+            <div class="step-indicator" [class.active]="currentStep >= 1">
+              <div class="step-circle">
+                <i class="bi" [class.bi-check]="currentStep > 1" [class.bi-1-circle]="currentStep === 1"></i>
+              </div>
+              <small class="d-none d-md-block mt-2">Personal Info</small>
+            </div>
+            <div class="step-indicator" [class.active]="currentStep >= 2">
+              <div class="step-circle">
+                <i class="bi" [class.bi-check]="currentStep > 2" [class.bi-2-circle]="currentStep <= 2"></i>
+              </div>
+              <small class="d-none d-md-block mt-2">Employment</small>
+            </div>
+            <div class="step-indicator" [class.active]="currentStep >= 3">
+              <div class="step-circle">
+                <i class="bi bi-3-circle"></i>
+              </div>
+              <small class="d-none d-md-block mt-2">Salary</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Alert -->
+        @if (errorMessage) {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          {{ errorMessage }}
+          <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+        </div>
+        }
+
+        <!-- Form Card -->
+        <div class="card shadow-lg border-0 rounded-4">
+          <div class="card-body p-4 p-md-5">
+            <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+
+              <!-- Step 1: Personal Information -->
+              @if (currentStep === 1) {
+              <div class="step-content">
+                <h5 class="fw-bold mb-4">
+                  <i class="bi bi-person text-primary me-2"></i>
+                  Personal Information
+                </h5>
+
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="fullName" class="form-label fw-semibold">
+                      Full Name <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="fullName" formControlName="fullName" class="form-control"
+                      [class.is-invalid]="isFieldInvalid('fullName')" placeholder="Enter full name">
+                    @if (isFieldInvalid('fullName')) {
+                    <div class="invalid-feedback">
+                      {{ getErrorMessage('fullName') }}
+                    </div>
+                    }
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="email" class="form-label fw-semibold">
+                      Email <span class="text-danger">*</span>
+                    </label>
+                    <input type="email" id="email" formControlName="email" class="form-control"
+                      [class.is-invalid]="isFieldInvalid('email')" placeholder="employee@example.com">
+                    @if (isFieldInvalid('email')) {
+                    <div class="invalid-feedback">
+                      {{ getErrorMessage('email') }}
+                    </div>
+                    }
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="phoneNumber" class="form-label fw-semibold">
+                      Phone Number <span class="text-danger">*</span>
+                    </label>
+                    <input type="tel" id="phoneNumber" formControlName="phoneNumber" class="form-control"
+                      [class.is-invalid]="isFieldInvalid('phoneNumber')" placeholder="9876543210" maxlength="10">
+                    @if (isFieldInvalid('phoneNumber')) {
+                    <div class="invalid-feedback">
+                      {{ getErrorMessage('phoneNumber') }}
+                    </div>
+                    }
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="dateOfJoining" class="form-label fw-semibold">
+                      Date of Joining <span class="text-danger">*</span>
+                    </label>
+                    <input type="date" id="dateOfJoining" formControlName="dateOfJoining" class="form-control"
+                      [class.is-invalid]="isFieldInvalid('dateOfJoining')">
+                    @if (isFieldInvalid('dateOfJoining')) {
+                    <div class="invalid-feedback">
+                      {{ getErrorMessage('dateOfJoining') }}
+                    </div>
+                    }
+                  </div>
+                  <div class="col-md-6">
+                    <label for="employeeCode" class="form-label fw-semibold">
+                      Employee Code <span class="text-danger">*</span>
+                    </label>
+                    <input type="string" id="employeeCode" formControlName="employeeCode" class="form-control"
+                      [class.is-invalid]="isFieldInvalid('employeeCode')">
+                    @if (isFieldInvalid('employeeCode')) {
+                    <div class="invalid-feedback">
+                      {{ getErrorMessage('employeeCode') }}
+                    </div>
+                    }
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                  <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Cancel
+                  </button>
+                  <button type="button" class="btn btn-primary px-4" (click)="nextStep()">
+                    Next <i class="bi bi-arrow-right ms-2"></i>
+                  </button>
+                </div>
+              </div>
+              }
+
+              <!-- Step 2: Employment & Bank Details -->
+              @if (currentStep === 2) {
+              <div class="step-content">
+                <h5 class="fw-bold mb-4">
+                  <i class="bi bi-briefcase text-primary me-2"></i>
+                  Employment & Bank Details
+                </h5>
+
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="department" class="form-label fw-semibold">
+                      Department <span class="text-danger">*</span>
+                    </label>
+                    <select id="department" formControlName="department" class="form-select"
+                      [class.is-invalid]="isFieldInvalid('department')">
+                      <option value="">Select Department</option>
+                      @for (dept of departments; track dept) {
+                      <option [value]="dept">{{ dept }}</option>
+                      }
+                    </select>
+                    @if (isFieldInvalid('department')) {
+                    <div class="invalid-feedback">
+                      {{ getErrorMessage('department') }}
+                    </div>
+                    }
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="jobTitle" class="form-label fw-semibold">
+                      Job Title <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="jobTitle" formControlName="jobTitle" class="form-control"
+                      [class.is-invalid]="isFieldInvalid('jobTitle')" placeholder="e.g., Software Engineer">
+                    @if (isFieldInvalid('jobTitle')) {
+                    <div class="invalid-feedback">
+                      {{ getErrorMessage('jobTitle') }}
+                    </div>
+                    }
+                  </div>
+
+                  <div class="col-12">
+                    <hr class="my-4">
+                    <h6 class="fw-semibold mb-3">
+                      <i class="bi bi-bank me-2"></i>
+                      Bank Account Information
+                    </h6>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="accountNumber" class="form-label fw-semibold">
+                      Account Number <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="accountNumber" formControlName="accountNumber" class="form-control"
+                      [class.is-invalid]="isFieldInvalid('accountNumber')" placeholder="123456789012" maxlength="12">
+                    @if (isFieldInvalid('accountNumber')) {
+                    <div class="invalid-feedback">
+                      {{ getErrorMessage('accountNumber') }}
+                    </div>
+                    }
+                    <small class="text-muted">Must be exactly 12 digits</small>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="ifsc" class="form-label fw-semibold">
+                      IFSC Code <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="ifsc" formControlName="ifsc" class="form-control text-uppercase"
+                      [class.is-invalid]="isFieldInvalid('ifsc')" placeholder="ABCD0123456" maxlength="11">
+                    @if (isFieldInvalid('ifsc')) {
+                    <div class="invalid-feedback">
+                      {{ getErrorMessage('ifsc') }}
+                    </div>
+                    }
+                    <small class="text-muted">11 characters</small>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="aadhaarNumber" class="form-label fw-semibold">
+                      Aadhar Number <span class="text-danger">*</span>
+                    </label>
+                    <input type="number" id="aadhaarNumber" formControlName="aadhaarNumber"
+                      class="form-control text-uppercase" [class.is-invalid]="isFieldInvalid('aadhaarNumber')"
+                      placeholder="123456789012" maxlength="12">
+                    @if (isFieldInvalid('aadhaarNumber')) {
+                    <div class="invalid-feedback">
+                      {{ getErrorMessage('aadhaarNumber') }}
+                    </div>
+                    }
+                    <small class="text-muted">12 digit length</small>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="aadhaarNumber" class="form-label fw-semibold">
+                      PAN Card Number <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="panNumber" formControlName="panNumber" class="form-control text-uppercase"
+                      [class.is-invalid]="isFieldInvalid('aadhaarNumber')" placeholder="ABCDE1234F" maxlength="12">
+                    @if (isFieldInvalid('panNumber')) {
+                    <div class="invalid-feedback">
+                      {{ getErrorMessage('panNumber') }}
+                    </div>
+                    }
+                  </div>
+
+
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                  <button type="button" class="btn btn-outline-secondary px-4" (click)="previousStep()">
+                    <i class="bi bi-arrow-left me-2"></i> Previous
+                  </button>
+                  <button type="button" class="btn btn-primary px-4" (click)="nextStep()">
+                    Next <i class="bi bi-arrow-right ms-2"></i>
+                  </button>
+                </div>
+              </div>
+              }
+
+              <!-- Step 3: Salary Details -->
+              @if (currentStep === 3) {
+              <div class="step-content">
+                <h5 class="fw-bold mb-4">
+                  <i class="bi bi-currency-rupee text-primary me-2"></i>
+                  Salary Structure
+                </h5>
+
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="basic" class="form-label fw-semibold">
+                      Basic Salary <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text">₹</span>
+                      <input type="number" id="basic" formControlName="basic" class="form-control"
+                        [class.is-invalid]="isFieldInvalid('basic')" placeholder="0" min="0" step="100">
+                    </div>
+                    @if (isFieldInvalid('basic')) {
+                    <div class="invalid-feedback d-block">
+                      {{ getErrorMessage('basic') }}
+                    </div>
+                    }
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="hra" class="form-label fw-semibold">
+                      HRA <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text">₹</span>
+                      <input type="number" id="hra" formControlName="hra" class="form-control"
+                        [class.is-invalid]="isFieldInvalid('hra')" placeholder="0" min="0" step="100">
+                    </div>
+                    @if (isFieldInvalid('hra')) {
+                    <div class="invalid-feedback d-block">
+                      {{ getErrorMessage('hra') }}
+                    </div>
+                    }
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="da" class="form-label fw-semibold">
+                      Dearness Allowance (DA) <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text">₹</span>
+                      <input type="number" id="da" formControlName="da" class="form-control"
+                        [class.is-invalid]="isFieldInvalid('da')" placeholder="0" min="0" step="100">
+                    </div>
+                    @if (isFieldInvalid('da')) {
+                    <div class="invalid-feedback d-block">
+                      {{ getErrorMessage('da') }}
+                    </div>
+                    }
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="allowances" class="form-label fw-semibold">
+                      Other Allowances <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text">₹</span>
+                      <input type="number" id="allowances" formControlName="allowances" class="form-control"
+                        [class.is-invalid]="isFieldInvalid('allowances')" placeholder="0" min="0" step="100">
+                    </div>
+                    @if (isFieldInvalid('allowances')) {
+                    <div class="invalid-feedback d-block">
+                      {{ getErrorMessage('allowances') }}
+                    </div>
+                    }
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="pf" class="form-label fw-semibold">
+                      Provident Fund (PF) <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text">₹</span>
+                      <input type="number" id="pf" formControlName="pf" class="form-control"
+                        [class.is-invalid]="isFieldInvalid('pf')" placeholder="0" min="0" step="100">
+                    </div>
+                    @if (isFieldInvalid('pf')) {
+                    <div class="invalid-feedback d-block">
+                      {{ getErrorMessage('pf') }}
+                    </div>
+                    }
+                    <small class="text-muted">Deduction</small>
+                  </div>
+                </div>
+
+                <!-- Salary Summary -->
+                <div class="salary-summary mt-4">
+                  <div class="card bg-light border-0">
+                    <div class="card-body">
+                      <h6 class="fw-bold mb-3">
+                        <i class="bi bi-calculator me-2"></i>
+                        Salary Summary
+                      </h6>
+                      <div class="row g-2">
+                        <div class="col-6">
+                          <div class="d-flex justify-content-between">
+                            <span class="text-muted">Basic:</span>
+                            <span class="fw-semibold">{{ formatCurrency(employeeForm.value.basic || 0) }}</span>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="d-flex justify-content-between">
+                            <span class="text-muted">HRA:</span>
+                            <span class="fw-semibold">{{ formatCurrency(employeeForm.value.hra || 0) }}</span>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="d-flex justify-content-between">
+                            <span class="text-muted">DA:</span>
+                            <span class="fw-semibold">{{ formatCurrency(employeeForm.value.da || 0) }}</span>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="d-flex justify-content-between">
+                            <span class="text-muted">Allowances:</span>
+                            <span class="fw-semibold">{{ formatCurrency(employeeForm.value.allowances || 0) }}</span>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="d-flex justify-content-between">
+                            <span class="text-danger">PF (Deduction):</span>
+                            <span class="fw-semibold text-danger">- {{ formatCurrency(employeeForm.value.pf || 0)
+                              }}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <hr class="my-3">
+                      <div class="d-flex justify-content-between">
+                        <span class="fw-bold fs-5">Net Salary:</span>
+                        <span class="fw-bold fs-5 text-success">{{ formatCurrency(calculateTotalSalary()) }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                  <button type="button" class="btn btn-outline-secondary px-4" (click)="previousStep()">
+                    <i class="bi bi-arrow-left me-2"></i> Previous
+                  </button>
+                  <button type="submit" class="btn btn-primary px-4" [disabled]="isLoading">
+                    @if (isLoading) {
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    Creating...
+                    } @else {
+                    <i class="bi bi-check-circle me-2"></i>
+                    Create Employee
+                    }
+                  </button>
+                </div>
+              </div>
+              }
+            </form>
+          </div>
+        </div>
+
+        <!-- Back to List -->
+        <div class="text-center mt-4">
+          <button class="btn btn-link text-muted text-decoration-none" (click)="cancel()">
+            <i class="bi bi-arrow-left me-2"></i>
+            Back to Employees List
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
