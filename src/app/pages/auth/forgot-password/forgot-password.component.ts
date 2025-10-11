@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -27,6 +28,11 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   otpTimer = 0;
   otpInterval: any;
   userEmail = '';
+  verifiedOtp = ''; // ✅ Store verified OTP
+
+  @ViewChild('otpInput') otpInput!: ElementRef;
+
+  private baseUrl = 'http://localhost:8080/api/auth';
 
   constructor(
     private fb: FormBuilder,
@@ -53,9 +59,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
         newPassword: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: ['', [Validators.required]],
       },
-      {
-        validators: this.passwordMatchValidator,
-      }
+      { validators: this.passwordMatchValidator }
     );
   }
 
@@ -65,7 +69,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
-  // Step 1: Request OTP - Now calls the service
+
   requestOTP(): void {
     if (this.emailForm.invalid) {
       this.markFormGroupTouched(this.emailForm);
@@ -74,7 +78,6 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.errorMessage = '';
-
     const email = this.emailForm.value.email;
     this.userEmail = email;
 
@@ -103,6 +106,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.errorMessage = '';
+    const data = { email: this.userEmail, otp: this.otpForm.value.otp };
 
     const otp = this.otpForm.value.otp;
 
@@ -125,6 +129,11 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   resetPassword(): void {
     if (this.passwordForm.invalid) {
       this.markFormGroupTouched(this.passwordForm);
+      return;
+    }
+
+    if (!this.verifiedOtp) {
+      this.errorMessage = 'OTP not verified or expired. Please resend OTP.';
       return;
     }
 
@@ -155,21 +164,17 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     });
   }
 
-  // OTP Timer Functions
+  /** OTP Timer */
   startOtpTimer(): void {
-    this.otpTimer = 300; // 5 minutes = 300 seconds
+    this.otpTimer = 300;
     this.otpInterval = setInterval(() => {
       this.otpTimer--;
-      if (this.otpTimer <= 0) {
-        this.clearOtpTimer();
-      }
+      if (this.otpTimer <= 0) this.clearOtpTimer();
     }, 1000);
   }
 
   clearOtpTimer(): void {
-    if (this.otpInterval) {
-      clearInterval(this.otpInterval);
-    }
+    if (this.otpInterval) clearInterval(this.otpInterval);
     this.otpTimer = 0;
   }
 
@@ -182,15 +187,13 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   resendOTP(): void {
     this.otpForm.reset();
     this.clearOtpTimer();
+    this.verifiedOtp = '';
     this.requestOTP();
   }
 
   togglePasswordVisibility(field: 'new' | 'confirm'): void {
-    if (field === 'new') {
-      this.showNewPassword = !this.showNewPassword;
-    } else {
-      this.showConfirmPassword = !this.showConfirmPassword;
-    }
+    if (field === 'new') this.showNewPassword = !this.showNewPassword;
+    else this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   goBack(): void {
@@ -207,10 +210,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   }
 
   private markFormGroupTouched(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach((key) => {
-      const control = formGroup.get(key);
-      control?.markAsTouched();
-    });
+    Object.keys(formGroup.controls).forEach((key) => formGroup.get(key)?.markAsTouched());
   }
 
   isFieldInvalid(formGroup: FormGroup, fieldName: string): boolean {
@@ -220,21 +220,13 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
   getErrorMessage(formGroup: FormGroup, fieldName: string): string {
     const field = formGroup.get(fieldName);
-    if (field?.hasError('required')) {
-      return `${this.getFieldLabel(fieldName)} is required`;
-    }
-    if (field?.hasError('email')) {
-      return 'Please enter a valid email address';
-    }
+    if (field?.hasError('required')) return `${this.getFieldLabel(fieldName)} is required`;
+    if (field?.hasError('email')) return 'Please enter a valid email address';
     if (field?.hasError('minlength')) {
       const minLength = field.errors?.['minlength'].requiredLength;
       return `${this.getFieldLabel(fieldName)} must be at least ${minLength} characters`;
     }
-    if (field?.hasError('pattern')) {
-      if (fieldName === 'otp') {
-        return 'OTP must be exactly 6 digits';
-      }
-    }
+    if (field?.hasError('pattern') && fieldName === 'otp') return 'OTP must be exactly 6 digits';
     return '';
   }
 

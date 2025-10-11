@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { finalize, catchError, of } from 'rxjs';
 
 @Component({
@@ -24,12 +24,10 @@ export class RaiseConcernComponent {
   constructor() {
     this.concernForm = this.fb.group({
       description: ['', Validators.required],
-      organizationId: [null, Validators.required], 
     });
   }
 
   get description() { return this.concernForm.get('description')!; }
-  get organizationId() { return this.concernForm.get('organizationId')!; }
   get fileName() { return this.file?.name || null; }
 
   onFileSelected(event: Event) {
@@ -68,39 +66,46 @@ export class RaiseConcernComponent {
       return;
     }
 
-    const orgId = this.organizationId.value;
-
-    
-    const formData = new FormData();
-    formData.append(
-      'data',
-      new Blob([JSON.stringify({
-        employeeId: user.employeeId,
-        organizationId: orgId,
-        description: this.description.value
-      })], { type: 'application/json' })
-    );
-
-    if (this.file) {
-      formData.append('attachment', this.file, this.file.name);
-    }
-
-    this.http.post('http://localhost:8080/api/concerns/raise', formData)
+   
+    this.http.get<number>(`http://localhost:8080/api/concerns/employee/${user.employeeId}/organization`)
       .pipe(
-        finalize(() => this.submitting.set(false)),
         catchError(err => {
+          this.submitting.set(false);
           this.submissionResult.set('error');
-          this.statusMsg.set(err.error?.message || 'An unexpected error occurred.');
+          this.statusMsg.set(err.error?.message || 'Failed to fetch organization ID.');
           return of(null);
         })
       )
-      .subscribe(res => {
-        if (res !== null) {
-          this.submissionResult.set('success');
-          this.statusMsg.set('Concern submitted successfully!');
-          this.concernForm.reset();
-          this.file = null;
+      .subscribe(orgId => {
+        if (!orgId) return;
+
+        const payload = {
+          employeeId: user.employeeId,
+          organizationId: orgId,
+          description: this.description.value
+        };
+
+       
+        const formData = new FormData();
+        formData.append('data', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
+        if (this.file) {
+          formData.append('attachment', this.file, this.file.name);
         }
+
+        this.http.post('http://localhost:8080/api/concerns/raise', formData)
+          .pipe(finalize(() => this.submitting.set(false)))
+          .subscribe({
+            next: () => {
+              this.submissionResult.set('success');
+              this.statusMsg.set('Concern submitted successfully!');
+              this.concernForm.reset();
+              this.file = null;
+            },
+            error: (err) => {
+              this.submissionResult.set('error');
+              this.statusMsg.set(err.error?.message || 'Submission failed.');
+            }
+          });
       });
   }
 

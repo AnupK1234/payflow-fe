@@ -3,7 +3,7 @@
 
   <form [formGroup]="concernForm" (ngSubmit)="submitConcern()" class="p-4 shadow-sm bg-light rounded">
 
-
+    
     <div class="mb-3">
       <label for="description" class="form-label">Description</label>
       <textarea id="description" class="form-control"
@@ -20,18 +20,6 @@
 
    
     <div class="mb-3">
-      <label for="organizationId" class="form-label">Organization ID</label>
-      <input type="number" id="organizationId" class="form-control"
-             formControlName="organizationId"
-             placeholder="Enter organization ID"
-             [class.is-invalid]="organizationId.invalid && organizationId.touched">
-      <div *ngIf="organizationId.invalid && organizationId.touched" class="text-danger small">
-        Organization ID is required.
-      </div>
-    </div>
-
-    
-    <div class="mb-3">
       <label for="attachment" class="form-label">Attachment (optional)</label>
       <input type="file" id="attachment" class="form-control" (change)="onFileSelected($event)">
       <div *ngIf="fileName" class="small text-muted mt-1">
@@ -39,7 +27,7 @@
       </div>
     </div>
 
- 
+   
     <div *ngIf="statusMessage()" 
          [class.text-success]="submissionStatus() === 'success'"
          [class.text-danger]="submissionStatus() === 'error'" 
@@ -47,7 +35,7 @@
       {{ statusMessage() }}
     </div>
 
- 
+   
     <div class="text-center">
       <button type="submit" class="btn btn-primary" [disabled]="isSubmitting() || concernForm.invalid">
         {{ isSubmitting() ? 'Submitting...' : 'Submit Concern' }}
