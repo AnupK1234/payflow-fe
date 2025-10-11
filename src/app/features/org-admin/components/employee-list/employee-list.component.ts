@@ -22,7 +22,7 @@ export class EmployeesListComponent implements OnInit {
   totalPages = 0;
 
   // UI State
-  isLoading = false;
+  isLoading: boolean = false;
   errorMessage = '';
   successMessage = '';
 
@@ -129,7 +129,7 @@ export class EmployeesListComponent implements OnInit {
   }
 
   navigateToView(id: number): void {
-    this.router.navigate(['/organization/employees', id]);
+    this.router.navigate([`/organization/employees/${id}`]);
   }
 
   navigateToEdit(id: number): void {
@@ -159,9 +159,7 @@ export class EmployeesListComponent implements OnInit {
     this.employeeService.deleteEmployee(this.selectedEmployee.id).subscribe({
       next: () => {
         this.isLoading = false;
-        this.successMessage = `Employee ${this.selectedEmployee!.firstName} ${
-          this.selectedEmployee!.lastName
-        } deleted successfully!`;
+        this.successMessage = `Employee ${this.selectedEmployee!.fullName} deleted successfully!`;
         this.closeDeleteModal();
         this.loadEmployees();
 

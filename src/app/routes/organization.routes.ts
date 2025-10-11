@@ -28,13 +28,13 @@ export const ORGANIZATION_ROUTES: Routes = [
       {
         path: 'employees/create',
         loadComponent: () => import('../features/org-admin/components/employee-create/employee-create.component').then(m => m.EmployeeCreateComponent),
-        title: 'Add Employee - Organization'
+        title: 'Add Employee'
       },
-    //   {
-    //     path: 'employees/:id',
-    //     loadComponent: () => import('./pages/employees/employee-detail.component').then(m => m.EmployeeDetailComponent),
-    //     title: 'Employee Details - Organization'
-    //   },
+      {
+        path: 'employees/:id',
+        loadComponent: () => import('../features/org-admin/components/employee-details/employee-details.component').then(m => m.EmployeeDetailsComponent),
+        title: 'Employee Details'
+      },
     //   {
     //     path: 'employees/:id/edit',
     //     loadComponent: () => import('./pages/employees/employee-form.component').then(m => m.EmployeeFormComponent),
