@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { finalize } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -33,7 +34,12 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
   private baseUrl = 'http://localhost:8080/api/auth';
 
-  constructor(private fb: FormBuilder, private router: Router, private http: HttpClient) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.initializeForms();
@@ -63,7 +69,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
-  /** Step 1: Request OTP */
+
   requestOTP(): void {
     if (this.emailForm.invalid) {
       this.markFormGroupTouched(this.emailForm);
@@ -75,23 +81,23 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     const email = this.emailForm.value.email;
     this.userEmail = email;
 
-    this.http
-      .post(`${this.baseUrl}/forgot-password`, { email }, { responseType: 'text' })
-      .pipe(finalize(() => (this.isLoading = false)))
-      .subscribe({
-        next: (res: string) => {
-          this.successMessage = res;
-          this.currentStep = 'otp';
-          this.startOtpTimer();
-          setTimeout(() => this.otpInput.nativeElement.focus(), 0);
-        },
-        error: (err) => {
-          this.errorMessage = typeof err.error === 'string' ? err.error : err.error?.message || 'Failed to send OTP';
-        },
-      });
+    // Use the service method here
+    this.authService.requestPasswordResetOtp(email).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.successMessage = 'OTP sent successfully to your email!';
+        this.currentStep = 'otp';
+        this.startOtpTimer();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        // Use the service's error handling helper
+        this.errorMessage = this.authService.formatError(error);
+      },
+    });
   }
 
-  /** Step 2: Verify OTP */
+  // Step 2: Verify OTP - Now calls the service
   verifyOTP(): void {
     if (this.otpForm.invalid) {
       this.markFormGroupTouched(this.otpForm);
@@ -102,25 +108,24 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
     const data = { email: this.userEmail, otp: this.otpForm.value.otp };
 
-    this.http
-      .post(`${this.baseUrl}/verify-otp`, data, { responseType: 'text' })
-      .pipe(finalize(() => (this.isLoading = false)))
-      .subscribe({
-        next: (res: string) => {
-          this.successMessage = res;
-          this.currentStep = 'password';
-          this.clearOtpTimer();
+    const otp = this.otpForm.value.otp;
 
-          // ✅ Save OTP for reset step
-          this.verifiedOtp = this.otpForm.value.otp;
-        },
-        error: (err) => {
-          this.errorMessage = typeof err.error === 'string' ? err.error : err.error?.message || 'Invalid OTP';
-        },
-      });
+    // Use the service method here
+    this.authService.verifyOtp(this.userEmail, otp).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.successMessage = 'OTP verified successfully!';
+        this.currentStep = 'password';
+        this.clearOtpTimer();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = this.authService.formatError(error) || 'Invalid OTP. Please try again.';
+      },
+    });
   }
 
-  /** Step 3: Reset Password */
+  // Step 3: Reset Password - Now calls the service
   resetPassword(): void {
     if (this.passwordForm.invalid) {
       this.markFormGroupTouched(this.passwordForm);
@@ -135,21 +140,28 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.errorMessage = '';
 
-    const data = { email: this.userEmail, otp: this.verifiedOtp, newPassword: this.passwordForm.value.newPassword };
+    const data = {
+      email: this.userEmail,
+      newPassword: this.passwordForm.value.newPassword,
+      otp: this.otpForm.value.otp,
+    };
 
-    this.http
-      .post(`${this.baseUrl}/reset-password`, data, { responseType: 'text' })
-      .pipe(finalize(() => (this.isLoading = false)))
-      .subscribe({
-        next: (res: string) => {
-          this.successMessage = res;
-          this.verifiedOtp = ''; // clear OTP after success
-          setTimeout(() => this.router.navigate(['/login']), 2000);
-        },
-        error: (err) => {
-          this.errorMessage = typeof err.error === 'string' ? err.error : err.error?.message || 'Failed to reset password';
-        },
-      });
+    // Use the service method here
+    this.authService.resetPassword(data).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.successMessage = 'Password reset successful! Redirecting to login...';
+
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2000);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage =
+          this.authService.formatError(error) || 'Failed to reset password. Please try again.';
+      },
+    });
   }
 
   /** OTP Timer */
