@@ -1,0 +1,23 @@
+.sidebar {
+    width: 250px;
+    background-color: #f8f9fa;
+    transition: width 0.3s ease;
+    overflow: hidden;
+
+    &.collapsed {
+        width: 60px; // Small width for hamburger only
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    button {
+        font-size: 1.2rem;
+    }
+}
+
+.bank-admin-root.collapsed {
+    .content {
+        display: none;
+    }
+}
