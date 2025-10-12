@@ -116,6 +116,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.successMessage = 'OTP verified successfully!';
         this.currentStep = 'password';
+        this.verifiedOtp = otp;
         this.clearOtpTimer();
       },
       error: (error) => {
