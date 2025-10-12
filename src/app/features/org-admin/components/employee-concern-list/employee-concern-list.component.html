@@ -1,0 +1,61 @@
+<div class="container py-4">
+    <h3 class="mb-4">Employee Concerns</h3>
+
+    @if (loading()) {
+    <div class="text-center my-5">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+    } @else if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+    } @else if (concerns().length === 0) {
+    <div class="alert alert-info">No concerns found.</div>
+    } @else {
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Description</th>
+                    <th>Attachment</th>
+                    <th>Status</th>
+                    <th>Change Status</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (c of concerns(); track c.id) {
+                <tr>
+                    <td>{{ c.id }}</td>
+                    <td>{{ c.description }}</td>
+                    <td>
+                        @if (c.attachmentUrl) {
+                        <a [href]="c.attachmentUrl" target="_blank" class="text-decoration-none">View</a>
+                        } @else {
+                        <span class="text-muted">—</span>
+                        }
+                    </td>
+                    <td>
+                        {{c.status}}
+                    </td>
+                    <td>
+                        <select class="form-select form-select-sm" [value]="c.status"
+                            (change)="onStatusChange(c, $event)">
+                            @for (s of statuses; track s) {
+                            <option [value]="s">{{ s }}</option>
+                            }
+                        </select>
+                    </td>
+                    <td>{{ c.createdAt | date: 'medium' }}</td>
+                    <td>
+                        <button class="btn btn-outline-success btn-sm" (click)="updateStatus(c, c.status)">
+                            Update
+                        </button>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</div>
