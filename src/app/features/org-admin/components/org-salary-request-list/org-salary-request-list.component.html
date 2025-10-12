@@ -1,0 +1,333 @@
+<div class="salary-requests-container">
+    <div class="container-fluid py-4">
+
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div class="mb-3 mb-md-0">
+                        <h2 class="fw-bold mb-1">
+                            <i class="bi bi-cash-stack text-primary me-2"></i>
+                            Salary Disbursement Requests
+                        </h2>
+                        <p class="text-muted mb-0">View and manage your organization's salary disbursement requests</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-primary" (click)="refreshData()" [disabled]="isLoading">
+                            <i class="bi" [class.bi-arrow-clockwise]="!isLoading" [class.bi-arrow-repeat]="isLoading"
+                                [class.spin]="isLoading"></i>
+                            Refresh
+                        </button>
+                        <button class="btn btn-primary" (click)="createNewRequest()" [disabled]="isCreating">
+                            @if (isCreating) {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            Creating...
+                            } @else {
+                            <i class="bi bi-plus-circle me-2"></i>
+                            Create Request
+                            }
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-box bg-primary-subtle text-primary me-3">
+                                <i class="bi bi-list-ul fs-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted mb-1 small">Total Requests</p>
+                                <h4 class="mb-0 fw-bold">{{ totalElements }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-box bg-warning-subtle text-warning me-3">
+                                <i class="bi bi-clock-history fs-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted mb-1 small">Pending</p>
+                                <h4 class="mb-0 fw-bold">{{ getPendingCount() }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-box bg-success-subtle text-success me-3">
+                                <i class="bi bi-check-circle fs-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted mb-1 small">Completed</p>
+                                <h4 class="mb-0 fw-bold">{{ getCompletedCount() }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-box bg-danger-subtle text-danger me-3">
+                                <i class="bi bi-x-circle fs-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted mb-1 small">Rejected</p>
+                                <h4 class="mb-0 fw-bold">{{ getRejectedCount() }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Messages -->
+        @if (errorMessage) {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            {{ errorMessage }}
+            <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+        </div>
+        }
+
+        @if (successMessage) {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            {{ successMessage }}
+            <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+        </div>
+        }
+
+        <!-- Info Alert -->
+        <div class="alert alert-info mb-4">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Note:</strong> Creating a new request will initiate salary disbursement for all active employees in
+            your organization.
+            The request will be sent to the bank admin for approval.
+        </div>
+
+        <!-- Filters Section -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-bottom">
+                <h6 class="mb-0 fw-semibold">
+                    <i class="bi bi-funnel me-2"></i>
+                    Filters
+                </h6>
+            </div>
+            <div class="card-body">
+                <form [formGroup]="filterForm">
+                    <div class="row g-3">
+                        <!-- Status Filter -->
+                        <div class="col-lg-4 col-md-6">
+                            <label for="status" class="form-label fw-semibold small">
+                                <i class="bi bi-tag me-1"></i>Status
+                            </label>
+                            <select id="status" formControlName="status" class="form-select">
+                                @for (option of statusOptions; track option.value) {
+                                <option [value]="option.value">{{ option.label }}</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Page Size -->
+                        <div class="col-lg-3 col-md-6">
+                            <label for="pageSize" class="form-label fw-semibold small">
+                                <i class="bi bi-list-ul me-1"></i>Items per page
+                            </label>
+                            <select id="pageSize" formControlName="pageSize" class="form-select">
+                                @for (size of pageSizeOptions; track size) {
+                                <option [value]="size">{{ size }}</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Info -->
+                        <div class="col-lg-5 col-md-12 d-flex align-items-end">
+                            <div class="stats-info w-100">
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Showing <strong>{{ requests.length }}</strong> of <strong>{{ totalElements
+                                        }}</strong> requests
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="px-4 py-3">Request ID</th>
+                                <th class="py-3">Organization ID</th>
+                                <th class="py-3">Request Date</th>
+                                <th class="py-3">Status</th>
+                                <th class="py-3">Approved Date</th>
+                                <th class="py-3">Created By</th>
+                                <th class="py-3">Approved By</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (isLoading && requests.length === 0) {
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="text-muted mt-3 mb-0">Loading salary disbursement requests...</p>
+                                </td>
+                            </tr>
+                            } @else if (requests.length === 0) {
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
+                                    <p class="text-muted mb-2">No salary disbursement requests found</p>
+                                    <button class="btn btn-primary btn-sm" (click)="createNewRequest()"
+                                        [disabled]="isCreating">
+                                        <i class="bi bi-plus-circle me-2"></i>
+                                        Create First Request
+                                    </button>
+                                </td>
+                            </tr>
+                            } @else {
+                            @for (request of requests; track request.id) {
+                            <tr>
+                                <td class="px-4 py-3">
+                                    <span class="fw-semibold text-primary">#{{ request.id }}</span>
+                                </td>
+                                <td class="py-3">
+                                    <span class="badge bg-light text-dark">Org-{{ request.organizationId }}</span>
+                                </td>
+                                <td class="py-3">
+                                    <i class="bi bi-calendar3 text-muted me-2"></i>
+                                    <small>{{ formatDate(request.requestDate) }}</small>
+                                </td>
+                                <td class="py-3">
+                                    <span class="badge {{ getStatusBadgeClass(request.status) }}">
+                                        <i class="bi" [class.bi-clock-history]="request.status === 'PENDING'"
+                                            [class.bi-check-circle]="request.status === 'APPROVED' || request.status === 'COMPLETED'"
+                                            [class.bi-x-circle]="request.status === 'REJECTED'" class="me-1"></i>
+                                        {{ request.status }}
+                                    </span>
+                                </td>
+                                <td class="py-3">
+                                    @if (request.approvedAt) {
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    <small>{{ formatDate(request.approvedAt) }}</small>
+                                    } @else {
+                                    <span class="text-muted">
+                                        <i class="bi bi-dash-circle me-2"></i>
+                                        <small>Not yet approved</small>
+                                    </span>
+                                    }
+                                </td>
+                                <td class="py-3">
+                                    @if (request.createdById) {
+                                    <span class="badge bg-primary-subtle text-primary">ID: {{ request.createdById
+                                        }}</span>
+                                    } @else {
+                                    <span class="text-muted">N/A</span>
+                                    }
+                                </td>
+                                <td class="py-3">
+                                    @if (request.approvedById) {
+                                    <span class="badge bg-success-subtle text-success">ID: {{ request.approvedById
+                                        }}</span>
+                                    } @else {
+                                    <span class="text-muted">
+                                        <i class="bi bi-dash-circle me-1"></i>
+                                        Pending
+                                    </span>
+                                    }
+                                </td>
+                            </tr>
+                            }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            @if (totalPages > 1) {
+            <div class="card-footer bg-white border-top">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="text-muted mb-0">
+                            Page <strong>{{ currentPage + 1 }}</strong> of <strong>{{ totalPages }}</strong>
+                            ({{ totalElements }} total requests)
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <nav>
+                            <ul class="pagination justify-content-md-end mb-0">
+                                <!-- First Page -->
+                                <li class="page-item" [class.disabled]="currentPage === 0">
+                                    <button class="page-link" (click)="goToPage(0)" [disabled]="currentPage === 0">
+                                        <i class="bi bi-chevron-double-left"></i>
+                                    </button>
+                                </li>
+
+                                <!-- Previous Page -->
+                                <li class="page-item" [class.disabled]="currentPage === 0">
+                                    <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 0">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </button>
+                                </li>
+
+                                <!-- Page Numbers -->
+                                @for (page of getPageNumbers(); track page) {
+                                <li class="page-item" [class.active]="currentPage === page">
+                                    <button class="page-link" (click)="goToPage(page)">
+                                        {{ page + 1 }}
+                                    </button>
+                                </li>
+                                }
+
+                                <!-- Next Page -->
+                                <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+                                    <button class="page-link" (click)="nextPage()"
+                                        [disabled]="currentPage === totalPages - 1">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </button>
+                                </li>
+
+                                <!-- Last Page -->
+                                <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+                                    <button class="page-link" (click)="goToPage(totalPages - 1)"
+                                        [disabled]="currentPage === totalPages - 1">
+                                        <i class="bi bi-chevron-double-right"></i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>
