@@ -1,0 +1,93 @@
+<div class="dashboard-container p-3">
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h3 class="fw-bold mb-0">Client Dashboard</h3>
+      <small class="text-muted">Overview of your payment requests and account summary</small>
+    </div>
+    <button class="btn btn-primary btn-sm" (click)="refreshDashboard()">
+      <i class="bi bi-arrow-repeat me-1"></i> Refresh
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3" *ngFor="let stat of statsArray">
+      <div class="card shadow-sm border-0 rounded-3 p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted mb-1">{{ stat.label }}</h6>
+            <h4 class="fw-bold">{{ stat.value }}</h4>
+          </div>
+          <div class="icon-circle" [ngClass]="stat.bg">
+            <i class="{{ stat.icon }}"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analytics Section -->
+  <div class="row g-3 mb-4">
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0 rounded-3 p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold mb-0">Monthly Spending Trends</h6>
+          <select class="form-select form-select-sm w-auto">
+            <option>2025</option>
+            <option>2024</option>
+          </select>
+        </div>
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-graph-up fs-3"></i>
+          <p class="mb-0">[Chart Placeholder]</p>
+          <small>Integrate Chart.js or ApexCharts here later</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0 rounded-3 p-3">
+        <h6 class="fw-bold mb-3">Payment Status Summary</h6>
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-pie-chart fs-3"></i>
+          <p class="mb-0">[Pie Chart Placeholder]</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="card shadow-sm border-0 rounded-3 p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h6 class="fw-bold mb-0">Recent Payment Requests</h6>
+      <a routerLink="/client/payment-requests" class="text-primary small">View All</a>
+    </div>
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">Request ID</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Date</th>
+          <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let req of recentRequests">
+          <td>{{ req.id }}</td>
+          <td>₹{{ req.amount | number:'1.0-0' }}</td>
+          <td>{{ req.createdAt | date:'mediumDate' }}</td>
+          <td>
+            <span class="badge" [ngClass]="{
+              'bg-success': req.status === 'ACCEPTED',
+              'bg-warning text-dark': req.status === 'PENDING',
+              'bg-danger': req.status === 'REJECTED'
+            }">
+              {{ req.status | titlecase }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<app-shared-navbar></app-shared-navbar>
+
+<div class="client-root d-flex vh-100">
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <div class="sidebar-header p-3 d-flex align-items-center justify-content-between">
+      <div>
+        <h5 class="m-0">Client</h5>
+        <small class="text-muted">Dashboard</small>
+      </div>
+      <button class="btn btn-sm btn-link" (click)="toggleSidebar()" aria-label="Toggle sidebar">☰</button>
+    </div>
+
+    <nav class="nav flex-column p-2">
+      <a class="nav-link" routerLink="/client/dashboard" routerLinkActive="active">Dashboard</a>
+      <a class="nav-link" routerLink="/client/payment-requests" routerLinkActive="active">Payment Requests</a>
+      <!-- Add more client links here if needed -->
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <main class="content flex-grow-1 p-3">
+    <router-outlet></router-outlet>
+  </main>
+</div>

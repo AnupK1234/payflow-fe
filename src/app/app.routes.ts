@@ -7,7 +7,7 @@ import { RoleGuard } from './core/guards/role.guard';
  * Using lazy loading for better performance and code splitting
  */
 export const routes: Routes = [
-  // Home route - loads immediately
+  // Home route
   {
     path: '',
     loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent),
@@ -35,23 +35,23 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
     title: 'Reset Password - PayFlow'
   },
-  
-  // Bank Admin routes - with auth guard
+
+  // Bank Admin routes
   {
     path: 'bank-admin',
     loadChildren: () => import('./routes/bank-admin.routes').then(m => m.BANK_ADMIN_ROUTES),
     canActivate: [AuthGuard, RoleGuard],
     data: { role: 'BANK_ADMIN' }
   },
+
+  // Employee routes
   {
-  path: 'employee',
-  loadChildren: () => import('./routes/employee.routes').then(m => m.EMPLOYEE_ROUTES),
-  canActivate: [AuthGuard, RoleGuard],
-  data: { role: 'EMPLOYEE' }
-},
-
-
-  // Organization routes - with auth guard
+    path: 'employee',
+    loadChildren: () => import('./routes/employee.routes').then(m => m.EMPLOYEE_ROUTES),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'EMPLOYEE' }
+  },
+   // Organization routes - with auth guard
 //   {
 //     path: 'organization',
 //     loadChildren: () => import('./modules/organization/organization.routes').then(m => m.ORGANIZATION_ROUTES),
@@ -67,6 +67,14 @@ export const routes: Routes = [
 //     // data: { role: 'EMPLOYEE' }
 //   },
 
+  // Client routes
+ {
+  path: 'client',
+  loadChildren: () => import('./routes/client.routes').then(m => m.CLIENT_ROUTES),
+  canActivate: [AuthGuard, RoleGuard],
+  data: { role: 'CLIENT' }
+},
+
   // Error pages
   {
     path: 'unauthorized',
@@ -79,9 +87,6 @@ export const routes: Routes = [
     title: 'Page Not Found - PayFlow'
   },
 
-  // Wildcard route - must be last
-  {
-    path: '**',
-    redirectTo: 'not-found'
-  }
+  // Wildcard route
+  { path: '**', redirectTo: 'not-found' }
 ];

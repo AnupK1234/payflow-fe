@@ -1,4 +1,3 @@
-// reset-password.component.ts
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -76,6 +75,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.successMessage = '';
     this.userEmail = this.emailForm.value.email;
 
     this.http
@@ -90,7 +90,14 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.isLoading = false;
-          this.errorMessage = err.error || 'Failed to send OTP';
+          // Friendly error messages
+          if (err.status === 404 || (err.error && err.error.includes('User not found'))) {
+            this.errorMessage = 'No account found with this email. Please check and try again.';
+          } else if (err.status === 500) {
+            this.errorMessage = 'Something went wrong on the server. Please try again later.';
+          } else {
+            this.errorMessage = err.error || 'Failed to send OTP. Please try again.';
+          }
         },
       });
   }
@@ -104,6 +111,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.successMessage = '';
 
     const data = { email: this.userEmail, otp: this.otpForm.value.otp };
 
@@ -121,7 +129,11 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.isLoading = false;
-          this.errorMessage = err.error || 'Invalid OTP';
+          if (err.status === 400) {
+            this.errorMessage = 'Invalid OTP. Please check and try again.';
+          } else {
+            this.errorMessage = err.error || 'Failed to verify OTP';
+          }
         },
       });
   }
@@ -133,7 +145,6 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Get OTP from cookie
     const otp = this.cookieService.get('forgotPasswordOtp');
     if (!otp) {
       this.errorMessage = 'OTP expired or missing. Please resend OTP.';
@@ -142,6 +153,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.successMessage = '';
 
     const data = { email: this.userEmail, otp, newPassword: this.passwordForm.value.newPassword };
 
@@ -151,15 +163,16 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
         next: (res: string) => {
           this.isLoading = false;
           this.successMessage = res;
-
-          // Delete OTP cookie
           this.cookieService.delete('forgotPasswordOtp');
-
           setTimeout(() => this.router.navigate(['/login']), 2000);
         },
         error: (err) => {
           this.isLoading = false;
-          this.errorMessage = err.error || 'Failed to reset password';
+          if (err.status === 400) {
+            this.errorMessage = 'Invalid request or OTP expired. Please try again.';
+          } else {
+            this.errorMessage = err.error || 'Failed to reset password';
+          }
         },
       });
   }
@@ -205,6 +218,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     Object.keys(formGroup.controls).forEach((key) => formGroup.get(key)?.markAsTouched());
   }
 
+  /** Clear timer on destroy */
   ngOnDestroy(): void {
     this.clearOtpTimer();
   }
