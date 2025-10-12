@@ -1,0 +1,167 @@
+<!-- <div class="card p-3 shadow-sm border-0 rounded-3">
+  <h6 class="fw-bold mb-3">Pending Payment Requests</h6>
+
+  <div *ngIf="isLoading" class="text-center py-4 text-muted">
+    Loading requests...
+  </div>
+
+  <div *ngIf="errorMessage" class="text-danger mb-2">{{ errorMessage }}</div>
+
+  <table class="table table-hover align-middle mb-0" *ngIf="paymentRequests.length > 0">
+    <thead class="table-light">
+      <tr>
+        <th>Request ID</th>
+        <th>Amount</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let req of paymentRequests">
+        <td>{{ req.id }}</td>
+        <td>₹{{ req.amount | number:'1.0-0' }}</td>
+        <td>{{ req.createdAt | date:'medium' }}</td>
+        <td>{{ req.status }}</td>
+        <td>
+          <button 
+            class="btn btn-sm btn-success me-1"
+            (click)="acceptRequest(req.id)" 
+            [disabled]="req.status !== 'PENDING'">
+            Accept
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!isLoading && paymentRequests.length === 0" class="text-muted py-3 text-center">
+    No pending requests.
+  </div>
+
+  <div *ngIf="stats" class="mt-4">
+    <h6 class="fw-bold">Dashboard Stats</h6>
+    <div class="d-flex gap-3">
+      <span>Total: {{ stats.totalRequests }}</span>
+      <span>Pending: {{ stats.pending }}</span>
+      <span>Accepted: {{ stats.accepted }}</span>
+      <span>Rejected: {{ stats.rejected }}</span>
+    </div>
+  </div>
+</div> -->
+
+
+<!-- 
+  
+
+ <div class="card p-3 shadow-sm border-0 rounded-3">
+  <h6 class="fw-bold mb-3">Pending Payment Requests</h6>
+
+  <div *ngIf="isLoading" class="text-center py-4 text-muted">
+    Loading requests...
+  </div>
+
+  <div *ngIf="errorMessage" class="text-danger mb-2">{{ errorMessage }}</div>
+
+  <table class="table table-hover align-middle mb-0" *ngIf="paymentRequests.length > 0">
+    <thead class="table-light">
+      <tr>
+        <th>Request ID</th>
+        <th>Amount</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Description</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let req of paymentRequests">
+        <td>{{ req.id }}</td>
+        <td>₹{{ req.amount | number:'1.0-0' }}</td>
+        <td>{{ req.createdAt | date:'medium' }}</td>
+        <td>{{ req.status }}</td>
+        <td>{{ req.description || '-' }}</td>
+        <td>
+          <button 
+            class="btn btn-sm btn-success me-1"
+            (click)="acceptRequest(req)" 
+            [disabled]="req.status !== 'PENDING'">
+            Accept
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!isLoading && paymentRequests.length === 0" class="text-muted py-3 text-center">
+    No pending requests.
+  </div>
+
+  <div *ngIf="stats" class="mt-4">
+    <h6 class="fw-bold">Dashboard Stats</h6>
+    <div class="d-flex gap-3">
+      <span>Total: {{ stats.totalRequests }}</span>
+      <span>Pending: {{ stats.pending }}</span>
+      <span>Accepted: {{ stats.accepted }}</span>
+      <span>Rejected: {{ stats.rejected }}</span>
+    </div>
+  </div>
+</div> -->
+
+
+<div class="card p-3 shadow-sm border-0 rounded-3">
+  <h6 class="fw-bold mb-3">Pending Payment Requests</h6>
+
+  <div *ngIf="isLoading" class="text-center py-4 text-muted">Loading requests...</div>
+  <div *ngIf="errorMessage" class="text-danger mb-2">{{ errorMessage }}</div>
+
+  <table class="table table-hover align-middle mb-0" *ngIf="paymentRequests.length > 0">
+    <thead class="table-light">
+      <tr>
+        <th>Request ID</th>
+        <th>Amount</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Bank Account</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let req of paymentRequests">
+        <td>{{ req.id }}</td>
+        <td>₹{{ req.amount | number:'1.0-0' }}</td>
+        <td>{{ req.createdAt | date:'medium' }}</td>
+        <td>{{ req.status }}</td>
+        <td>
+          <select [(ngModel)]="req.clientBankAccountId" class="form-select form-select-sm">
+            <option *ngIf="!req.clientBankAccounts || req.clientBankAccounts.length === 0" disabled>
+              No bank accounts
+            </option>
+            <option *ngFor="let acc of req.clientBankAccounts" [value]="acc.id">
+              {{ acc.accountNumberEnc }} ({{ acc.ifsc }})
+            </option>
+          </select>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-success me-1" (click)="acceptRequest(req)" [disabled]="req.status !== 'PENDING'">
+            Accept
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!isLoading && paymentRequests.length === 0" class="text-muted py-3 text-center">
+    No pending requests.
+  </div>
+
+  <div *ngIf="stats" class="mt-4">
+    <h6 class="fw-bold">Dashboard Stats</h6>
+    <div class="d-flex gap-3">
+      <span>Total: {{ stats.totalRequests }}</span>
+      <span>Pending: {{ stats.pending }}</span>
+      <span>Accepted: {{ stats.accepted }}</span>
+      <span>Rejected: {{ stats.rejected }}</span>
+    </div>
+  </div>
+</div>

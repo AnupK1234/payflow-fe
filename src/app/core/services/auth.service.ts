@@ -21,14 +21,16 @@ export class AuthService {
     private cookieService: CookieService
   ) {}
 
+  // Login method
   login(credentials: LoginRequest): Observable<User> {
-    return this.http.post<LoginResponse>(this.apiUrl + '/login', credentials).pipe(
-      tap((response) => this.storeAuthData(response)),
-      map((response) => response.user),
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials).pipe(
+      tap(response => this.storeAuthData(response)),
+      map(response => response.user),
       catchError(this.handleError)
     );
   }
 
+  // Store token and user info in cookies
   private storeAuthData(response: LoginResponse): void {
     const expiryTime = 1 / 24; // 1 hour in days
 
@@ -36,43 +38,63 @@ export class AuthService {
     this.cookieService.set('user', JSON.stringify(response.user), expiryTime, '/');
   }
 
+  // Handle errors
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An unknown error occurred!';
     if (error.error instanceof ErrorEvent) {
       // Client-side error
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Backend error
+      // Server-side error
       errorMessage = error.error?.message || 'Invalid username or password';
     }
     console.error(error);
     return throwError(() => new Error(errorMessage));
   }
 
-  routeUserByRole(user: any): string {
+  // Route user based on role
+  routeUserByRole(user: User): void {
     if (user.mustResetPassword) {
-      this.router.navigate(['/reset-password'], {
-        queryParams: { firstLogin: true },
-      });
-      return 'reset-password';
+      this.router.navigate(['/reset-password'], { queryParams: { firstLogin: true } });
+      return;
     }
 
-    switch (user.role) {
+    const role = user.role?.toUpperCase(); // normalize case
+    switch (role) {
       case 'BANK_ADMIN':
         this.router.navigate(['/bank-admin/dashboard']);
-        return '/bank-admin/dashboard';
+        break;
       case 'ORG_ADMIN':
         this.router.navigate(['/organization/dashboard']);
-        return '/organization/dashboard';
+        break;
       case 'EMPLOYEE':
         this.router.navigate(['/employee/dashboard']);
-        return '/employee/dashboard';
+        break;
+      case 'CLIENT':
+        this.router.navigate(['/client/dashboard']);
+        break;
       default:
-        // Handle unknown role gracefully, maybe log out and redirect to home
-        return 'Unknown user role';
+        console.error('Unknown user role:', role);
     }
   }
 
+  // Logout method
+  logout(): void {
+    this.cookieService.delete('token', '/');
+    this.cookieService.delete('user', '/');
+    this.router.navigate(['/login']);
+  }
+
+  // Check if user is authenticated
+  isAuthenticated(): boolean {
+    return this.cookieService.check('token');
+  }
+
+  // Get current logged-in user
+  getCurrentUser(): User | null {
+    const user = this.cookieService.get('user');
+    return user ? JSON.parse(user) : null;
+  }
   requestPasswordResetOtp(email: string): Observable<string> {
     const data: OtpRequest = { email };
     return this.http.post<string>(`${this.apiUrl}/forgot-password`, data, {

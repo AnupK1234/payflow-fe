@@ -18,8 +18,7 @@ type LoginFormFields = {
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
-  // Consider using OnPush change detection if not already set
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
@@ -28,7 +27,7 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
   generatedCaptcha = '';
 
-  // 1. Dependency Injection is cleaner: Removed HttpClient and Router from the component
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -63,7 +62,7 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    // 2. Component only contains presentational validation (form status) and orchestration
+    
     if (this.loginForm.value.captcha !== this.generatedCaptcha) {
       this.handleCaptchaError();
       return;
@@ -74,16 +73,16 @@ export class LoginComponent implements OnInit {
 
     const { username, password } = this.loginForm.value;
 
-    // 3. API call is delegated to the AuthService
+  
     this.authService.login({ username, password }).subscribe({
       next: (user) => {
         this.isLoading = false;
-        // 4. Role-based routing is delegated to the AuthService  
+      
         this.authService.routeUserByRole(user);
       },
       error: (error: Error) => {
         this.isLoading = false;
-        // The error message comes directly from the service's error handler
+       
         this.errorMessage = error.message;
         this.handleCaptchaError();
       },
@@ -96,7 +95,7 @@ export class LoginComponent implements OnInit {
     this.loginForm.patchValue({ captcha: '' });
   }
 
-  /* --- Form Helper Methods (Can also be moved to a utility or BaseComponent if needed elsewhere) --- */
+ 
 
   private markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
