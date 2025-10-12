@@ -46,7 +46,7 @@ export class ConcernsListComponent {
 
   updateStatus(concern: Concern, newStatus: ConcernStatus) {
     console.log("New status : " + newStatus + " concern status " +    concern.status);
-    
+
     if (!newStatus || newStatus === concern.status) return;
 
     const reqBody = { status: newStatus };
@@ -67,10 +67,10 @@ export class ConcernsListComponent {
   }
 
   onStatusChange(concern: Concern, event: Event) {
-  const select = event.target as HTMLSelectElement | null;
-  if (!select) return;
-  const newStatus = select.value as Concern['status'];
-  this.updateStatus(concern, newStatus);
-}
+    const select = event.target as HTMLSelectElement | null;
+    if (!select) return;
+    const newStatus = select.value as Concern['status'];
+    this.updateStatus(concern, newStatus);
+  }
 
 }

@@ -51,6 +51,22 @@ export const ORGANIZATION_ROUTES: Routes = [
           ).then((m) => m.EmployeeDetailsComponent),
         title: 'Employee Details',
       },
+      {
+        path: 'salary-disburement',
+        loadComponent: () =>
+          import(
+            '../features/org-admin/components/org-salary-request-list/org-salary-request-list.component'
+          ).then((m) => m.OrgSalaryRequestsListComponent),
+        title: 'Salary Disburement Request',
+      },
+      {
+        path: 'batch-create',
+        loadComponent: () =>
+          import(
+            '../features/org-admin/components/employee-batch-create/employee-batch-create.component'
+          ).then((m) => m.BatchCreateEmployee),
+        title: 'Salary Disburement Request',
+      },
     ],
   },
 ];
