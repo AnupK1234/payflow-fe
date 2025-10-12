@@ -108,7 +108,7 @@
   </div>
 </div> -->
 
-
+<!-- 
 <div class="card p-3 shadow-sm border-0 rounded-3">
   <h6 class="fw-bold mb-3">Pending Payment Requests</h6>
 
@@ -164,4 +164,56 @@
       <span>Rejected: {{ stats.rejected }}</span>
     </div>
   </div>
+</div> -->
+
+
+
+
+
+<div class="container mx-auto mt-6">
+  <h2 class="text-2xl font-semibold mb-4">Payment Requests</h2>
+
+  <table class="min-w-full bg-white border rounded">
+    <thead>
+      <tr class="bg-gray-200 text-left">
+        <th class="p-2 border">Request ID</th>
+        <th class="p-2 border">Amount</th>
+        <th class="p-2 border">Date</th>
+        <th class="p-2 border">Status</th>
+        <th class="p-2 border">Bank Account</th>
+        <th class="p-2 border">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let req of paymentRequests">
+        <td class="p-2 border">{{ req.id }}</td>
+        <td class="p-2 border">₹{{ req.amount }}</td>
+        <td class="p-2 border">{{ req.createdAt | date:'medium' }}</td>
+        <td class="p-2 border">{{ req.status }}</td>
+        <td class="p-2 border">
+          <ng-container *ngIf="req.clientBankAccounts?.length; else noAccounts">
+            <select [(ngModel)]="req.clientBankAccountId">
+              <option *ngFor="let acc of req.clientBankAccounts" [value]="acc.id">
+                {{ acc.accountNumberEnc }} - {{ acc.ifsc }}
+              </option>
+            </select>
+          </ng-container>
+          <ng-template #noAccounts>
+            <span>No bank accounts</span>
+          </ng-template>
+        </td>
+        <td class="p-2 border">
+          <button (click)="acceptRequest(req)" class="bg-blue-500 text-white px-3 py-1 rounded">
+            Accept
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="!isLoading && paymentRequests.length === 0">
+        <td colspan="6" class="text-center p-4 text-gray-500">No records found</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="isLoading" class="text-blue-500 mt-2">Loading...</div>
+  <div *ngIf="errorMessage" class="text-red-500 mt-2">{{ errorMessage }}</div>
 </div>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ClientService } from '../../services/client.service';
+import { ClientService, PaymentStatus } from '../../services/client.service';
 import { ClientPaymentRequest } from '../../models/client-payment-request.model';
 
 @Component({
@@ -11,7 +11,7 @@ import { ClientPaymentRequest } from '../../models/client-payment-request.model'
   templateUrl: './client-payment-history.html',
   styleUrls: ['./client-payment-history.css']
 })
-export class ClientPaymentHistoryComponent implements OnInit {
+export class ClientPaymentHistory implements OnInit {
   clientId: number = 0;
   paymentHistory: ClientPaymentRequest[] = [];
   startDate?: string;
@@ -19,6 +19,9 @@ export class ClientPaymentHistoryComponent implements OnInit {
   status?: string;
   errorMessage = '';
   isLoading = false;
+
+  // List of valid statuses for type-safe validation
+  private validStatuses: PaymentStatus[] = ['PENDING', 'ACCEPTED', 'PAID', 'FAILED'];
 
   constructor(private clientService: ClientService) {}
 
@@ -37,7 +40,24 @@ export class ClientPaymentHistoryComponent implements OnInit {
 
   fetchPaymentHistory(): void {
     this.isLoading = true;
-    this.clientService.getPaymentHistory(this.clientId, this.startDate, this.endDate, this.status).subscribe({
+
+    // ✅ Normalize and validate status
+    let normalizedStatus: PaymentStatus | undefined;
+    if (this.status) {
+      const upperStatus = this.status.trim().toUpperCase();
+      if (this.validStatuses.includes(upperStatus as PaymentStatus)) {
+        normalizedStatus = upperStatus as PaymentStatus;
+      } else {
+        console.warn(`Invalid status value: ${this.status}, ignoring filter`);
+      }
+    }
+
+    this.clientService.getPaymentHistory(
+      this.clientId,
+      this.startDate,
+      this.endDate,
+      normalizedStatus
+    ).subscribe({
       next: (res) => {
         this.paymentHistory = res;
         this.isLoading = false;

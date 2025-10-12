@@ -220,6 +220,7 @@
 // }
 
 
+
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -227,10 +228,15 @@ import { catchError, map } from 'rxjs/operators';
 import { ClientPaymentRequest } from '../models/client-payment-request.model';
 import { BankAccount } from '../models/bank-account.model';
 
+// ✅ Export PaymentStatus for use in components
+export type PaymentStatus = 'PENDING' | 'ACCEPTED' | 'PAID' | 'FAILED' | 'REJECTED';
+
 export interface DashboardStats {
   totalRequests: number;
   pending: number;
   accepted: number;
+  paid: number;
+  failed: number;
   rejected: number;
 }
 
@@ -238,65 +244,64 @@ export interface DashboardStats {
   providedIn: 'root'
 })
 export class ClientService {
-  private baseUrl = 'http://localhost:8080/api/payment-requests';
+  private paymentBaseUrl = 'http://localhost:8080/api/payment-requests';
+  private clientBaseUrl = 'http://localhost:8080/api/clients';
 
   constructor(private http: HttpClient) {}
 
-  getPendingRequests(clientId: number): Observable<ClientPaymentRequest[]> {
-    return this.http.get<ClientPaymentRequest[]>(`${this.baseUrl}/client/${clientId}/pending`).pipe(
-      catchError(err => this.handleError(err, 'Failed to fetch pending requests'))
-    );
+  /** Fetch all active bank accounts for a client */
+  getClientBankAccounts(clientId: number): Observable<BankAccount[]> {
+    return this.http.get<BankAccount[]>(`${this.clientBaseUrl}/${clientId}/bank-accounts`)
+      .pipe(catchError(err => this.handleError(err, 'Failed to fetch bank accounts')));
   }
 
-  getClientBankAccounts(clientId: number): Observable<BankAccount[]> {
-  return this.http.get<BankAccount[]>(`http://localhost:8080/api/clients/${clientId}/bank-accounts`).pipe(
-    catchError(err => this.handleError(err, 'Failed to fetch bank accounts'))
-  );
-}
-
-  /**
-   * Accept a payment request by passing both requestId and clientBankAccountId
-   */
+  /** Accept a payment request by providing request ID and bank account ID */
   acceptRequest(requestId: number, clientBankAccountId: number): Observable<ClientPaymentRequest> {
     return this.http.post<ClientPaymentRequest>(
-      `${this.baseUrl}/${requestId}/accept/${clientBankAccountId}`, {}
-    ).pipe(
-      catchError(err => this.handleError(err, 'Failed to accept payment request'))
-    );
+      `${this.paymentBaseUrl}/${requestId}/accept/${clientBankAccountId}`, {}
+    ).pipe(catchError(err => this.handleError(err, 'Failed to accept payment request')));
   }
 
-  getRecentRequests(clientId: number): Observable<ClientPaymentRequest[]> {
-    return this.http.get<ClientPaymentRequest[]>(`${this.baseUrl}/client/${clientId}/recent`).pipe(
-      catchError(err => this.handleError(err, 'Failed to fetch recent requests'))
-    );
-  }
-
-  getPaymentHistory(clientId: number, startDate?: string, endDate?: string, status?: string): Observable<ClientPaymentRequest[]> {
+  /** Fetch payment history for a client with optional filters */
+  getPaymentHistory(
+    clientId: number, 
+    startDate?: string, 
+    endDate?: string, 
+    status?: PaymentStatus
+  ): Observable<ClientPaymentRequest[]> {
     let params = new HttpParams();
     if (startDate) params = params.set('startDate', startDate);
     if (endDate) params = params.set('endDate', endDate);
     if (status) params = params.set('status', status);
 
-    return this.http.get<ClientPaymentRequest[]>(`${this.baseUrl}/client/${clientId}/history`, { params }).pipe(
-      catchError(err => this.handleError(err, 'Failed to fetch payment history'))
+    return this.http.get<ClientPaymentRequest[]>(`${this.paymentBaseUrl}/client/${clientId}/history`, { params })
+      .pipe(catchError(err => this.handleError(err, 'Failed to fetch payment history')));
+  }
+
+  /** Fetch the most recent 5 requests */
+  getRecentRequests(clientId: number): Observable<ClientPaymentRequest[]> {
+    return this.getPaymentHistory(clientId).pipe(
+      map(requests => requests.slice(0, 5)),
+      catchError(err => this.handleError(err, 'Failed to fetch recent requests'))
     );
   }
 
-  
-
-
+  /** Compute dashboard stats for a client */
   getDashboardStats(clientId: number): Observable<DashboardStats> {
     return this.getPaymentHistory(clientId).pipe(
       map((requests: ClientPaymentRequest[]) => ({
         totalRequests: requests.length,
         pending: requests.filter(r => r.status === 'PENDING').length,
         accepted: requests.filter(r => r.status === 'ACCEPTED').length,
+        paid: requests.filter(r => r.status === 'PAID').length,
+        failed: requests.filter(r => r.status === 'FAILED').length,
         rejected: requests.filter(r => r.status === 'REJECTED').length
       })),
       catchError(err => this.handleError(err, 'Failed to compute dashboard stats'))
     );
   }
 
+  /** Generic error handler */
   private handleError(err: any, defaultMessage: string): Observable<never> {
     console.error(defaultMessage, err);
     const message = err?.error?.message || defaultMessage;
