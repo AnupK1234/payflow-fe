@@ -13,7 +13,7 @@ import { CookieService } from 'ngx-cookie-service';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly apiUrl = environment.apiUrl;
+  private readonly apiUrl = environment.apiUrl + '/auth';
 
   constructor(
     private http: HttpClient,
@@ -23,9 +23,15 @@ export class AuthService {
 
   // Login method
   login(credentials: LoginRequest): Observable<User> {
+<<<<<<< HEAD
     return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials).pipe(
       tap(response => this.storeAuthData(response)),
       map(response => response.user),
+=======
+    return this.http.post<LoginResponse>(this.apiUrl + '/login', credentials).pipe(
+      tap((response) => this.storeAuthData(response)),
+      map((response) => response.user),
+>>>>>>> 94cc616c320cd8a4e27682c7d9ff744e508c38a4
       catchError(this.handleError)
     );
   }
@@ -78,6 +84,7 @@ export class AuthService {
     }
   }
 
+<<<<<<< HEAD
   // Logout method
   logout(): void {
     this.cookieService.delete('token', '/');
@@ -94,5 +101,34 @@ export class AuthService {
   getCurrentUser(): User | null {
     const user = this.cookieService.get('user');
     return user ? JSON.parse(user) : null;
+=======
+  requestPasswordResetOtp(email: string): Observable<string> {
+    const data: OtpRequest = { email };
+    return this.http.post<string>(`${this.apiUrl}/forgot-password`, data, {
+      responseType: 'text' as 'json',
+    });
+  }
+
+  verifyOtp(email: string, otp: string): Observable<string> {
+    const data: OtpVerificationRequest = { email, otp };
+    return this.http.post<string>(`${this.apiUrl}/verify-otp`, data, {
+      responseType: 'text' as 'json',
+    });
+  }
+
+  resetPassword(data: PasswordResetRequest): Observable<string> {
+    return this.http.post<string>(`${this.apiUrl}/reset-password`, data, {
+      responseType: 'text' as 'json',
+    });
+  }
+
+  formatError(error: any): string {
+    try {
+      const errorBody = JSON.parse(error.error);
+      return errorBody?.message || 'An unknown error occurred.';
+    } catch (e) {
+      return error.error || 'Failed to communicate with the server.';
+    }
+>>>>>>> 94cc616c320cd8a4e27682c7d9ff744e508c38a4
   }
 }

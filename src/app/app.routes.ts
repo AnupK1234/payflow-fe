@@ -46,6 +46,7 @@ export const routes: Routes = [
 
   // Employee routes
   {
+<<<<<<< HEAD
     path: 'employee',
     loadChildren: () => import('./routes/employee.routes').then(m => m.EMPLOYEE_ROUTES),
     canActivate: [AuthGuard, RoleGuard],
@@ -58,6 +59,20 @@ export const routes: Routes = [
 //     // canActivate: [AuthGuard, RoleGuard],
 //     // data: { role: 'ORGANIZATION' }
 //   },
+=======
+  path: 'employee',
+  loadChildren: () => import('./routes/employee.routes').then(m => m.EMPLOYEE_ROUTES),
+  canActivate: [AuthGuard, RoleGuard],
+  data: { role: 'EMPLOYEE' }
+},
+
+  {
+    path: 'organization',
+    loadChildren: () => import('./routes/organization.routes').then(m => m.ORGANIZATION_ROUTES),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'ORG_ADMIN' }
+  },
+>>>>>>> 94cc616c320cd8a4e27682c7d9ff744e508c38a4
 
   // Employee routes - with auth guard
 //   {

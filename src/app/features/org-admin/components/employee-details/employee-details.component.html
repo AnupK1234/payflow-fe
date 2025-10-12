@@ -1,0 +1,76 @@
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Employee Details</h3>
+        <div>
+            <button class="btn btn-secondary me-2" (click)="backToDashboard()">← Back</button>
+            <button class="btn btn-primary" (click)="toggleEdit()">
+                {{ editMode() ? 'Cancel Edit' : 'Edit Details' }}
+            </button>
+        </div>
+    </div>
+
+    @if (loading()) {
+    <div class="text-center my-5">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+    } @else if (employee()) {
+    <form [formGroup]="form" class="card shadow-sm p-4">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" formControlName="fullName" [readonly]="!editMode()" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" formControlName="email" [readonly]="!editMode()" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Employee Code</label>
+                <input type="text" class="form-control" formControlName="employeeCode" [readonly]="!editMode()" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Date of Joining</label>
+                <input type="date" class="form-control" formControlName="dateOfJoining" [readonly]="!editMode()" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Job Title</label>
+                <input type="text" class="form-control" formControlName="jobTitle" [readonly]="!editMode()" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Department</label>
+                <input type="text" class="form-control" formControlName="department" [readonly]="!editMode()" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Status</label>
+                <input type="text" class="form-control" formControlName="status" [readonly]="!editMode()" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Bank Account No.</label>
+                <input type="text" class="form-control" formControlName="bankAccountNumber" [readonly]="!editMode()" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">IFSC Code</label>
+                <input type="text" class="form-control" formControlName="ifscCode" [readonly]="!editMode()" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Aadhaar</label>
+                <input type="text" class="form-control" formControlName="aadhaarNumber" [readonly]="!editMode()" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">PAN</label>
+                <input type="text" class="form-control" formControlName="panNumber" [readonly]="!editMode()" />
+            </div>
+        </div>
+
+        @if (editMode()) {
+        <div class="mt-4 text-end">
+            <button class="btn btn-success" (click)="saveChanges()" [disabled]="form.invalid">
+                💾 Save Changes
+            </button>
+        </div>
+        }
+    </form>
+    } @else {
+    <p class="text-muted">No employee found.</p>
+    }
+</div>
