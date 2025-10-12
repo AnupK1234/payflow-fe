@@ -83,3 +83,5 @@ src/environments/environment*.ts
 *.tsbuildinfo
 
 prompts.md
+
+.metadata
