@@ -1,0 +1,47 @@
+<div class="container mx-auto mt-6">
+  <h2 class="text-2xl font-semibold mb-4">Payment History</h2>
+
+  <!-- Filter Section -->
+  <div class="flex gap-4 mb-4">
+    <input type="date" [(ngModel)]="startDate" class="border p-2 rounded" />
+    <input type="date" [(ngModel)]="endDate" class="border p-2 rounded" />
+    <select [(ngModel)]="status" class="border p-2 rounded">
+      <option value="">All</option>
+      <option value="PENDING">Pending</option>
+      <option value="ACCEPTED">Accepted</option>
+      <option value="REJECTED">Rejected</option>
+    </select>
+    <button (click)="fetchPaymentHistory()" class="bg-blue-500 text-white px-4 py-2 rounded">
+      Filter
+    </button>
+  </div>
+
+  <!-- Table -->
+  <table class="min-w-full bg-white border rounded">
+    <thead>
+      <tr class="bg-gray-200 text-left">
+        <th class="p-2 border">Request ID</th>
+        <th class="p-2 border">Amount</th>
+        <th class="p-2 border">Date</th>
+        <th class="p-2 border">Status</th>
+        <th class="p-2 border">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let req of paymentHistory">
+        <td class="p-2 border">{{ req.id }}</td>
+        <td class="p-2 border">₹{{ req.amount }}</td>
+        <td class="p-2 border">{{ req.createdAt | date: 'medium' }}</td>
+        <td class="p-2 border">{{ req.status }}</td>
+        <td class="p-2 border">{{ req.description || '-' }}</td>
+      </tr>
+      <tr *ngIf="!isLoading && paymentHistory.length === 0">
+        <td colspan="5" class="text-center p-4 text-gray-500">No records found</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-blue-500 mt-2">Loading...</div>
+  <div *ngIf="errorMessage" class="text-red-500 mt-2">{{ errorMessage }}</div>
+</div>

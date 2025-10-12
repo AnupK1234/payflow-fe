@@ -282,6 +282,9 @@ export class ClientService {
     );
   }
 
+  
+
+
   getDashboardStats(clientId: number): Observable<DashboardStats> {
     return this.getPaymentHistory(clientId).pipe(
       map((requests: ClientPaymentRequest[]) => ({

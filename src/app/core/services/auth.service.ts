@@ -23,15 +23,9 @@ export class AuthService {
 
   // Login method
   login(credentials: LoginRequest): Observable<User> {
-<<<<<<< HEAD
     return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials).pipe(
       tap(response => this.storeAuthData(response)),
       map(response => response.user),
-=======
-    return this.http.post<LoginResponse>(this.apiUrl + '/login', credentials).pipe(
-      tap((response) => this.storeAuthData(response)),
-      map((response) => response.user),
->>>>>>> 94cc616c320cd8a4e27682c7d9ff744e508c38a4
       catchError(this.handleError)
     );
   }
@@ -84,7 +78,6 @@ export class AuthService {
     }
   }
 
-<<<<<<< HEAD
   // Logout method
   logout(): void {
     this.cookieService.delete('token', '/');
@@ -101,7 +94,7 @@ export class AuthService {
   getCurrentUser(): User | null {
     const user = this.cookieService.get('user');
     return user ? JSON.parse(user) : null;
-=======
+  }
   requestPasswordResetOtp(email: string): Observable<string> {
     const data: OtpRequest = { email };
     return this.http.post<string>(`${this.apiUrl}/forgot-password`, data, {
@@ -129,6 +122,5 @@ export class AuthService {
     } catch (e) {
       return error.error || 'Failed to communicate with the server.';
     }
->>>>>>> 94cc616c320cd8a4e27682c7d9ff744e508c38a4
   }
 }
