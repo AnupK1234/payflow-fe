@@ -1,7 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, retry } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { Concern } from '../models/concern.interface';
+import { CookieService } from 'ngx-cookie-service';
 
 export interface Employee {
   id: number;
@@ -78,7 +80,9 @@ export interface EmployeeFilters {
   providedIn: 'root',
 })
 export class EmployeeService {
+  private baseUrl = environment.apiUrl;
   private apiUrl = `${environment.apiUrl}/employees`;
+  private cookie = inject(CookieService);
 
   constructor(private http: HttpClient) {}
 
@@ -139,4 +143,15 @@ export class EmployeeService {
   updateEmployeeSalary(id: number, salary: any): Observable<Employee> {
     return this.http.put<Employee>(`${this.apiUrl}/${id}/salary`, salary);
   }
+
+  // get employee concern by org id
+  getConcernList() : Observable<Concern[]>{
+    const organizationId = JSON.parse(this.cookie.get("user"))?.organizationId;
+    return this.http.get<Concern[]>(`${this.baseUrl}/concerns/organization/${organizationId}`)
+  }
+
+  updateConcernStatus(id: number, body: { status: string }) {
+  return this.http.put(`${this.baseUrl}/concerns/${id}/status`, body);
+}
+
 }
