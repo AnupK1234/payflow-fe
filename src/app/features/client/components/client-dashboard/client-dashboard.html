@@ -6,9 +6,8 @@
       <small class="text-muted">Overview of your payment requests and account summary</small>
     </div>
     <button class="btn btn-primary btn-sm" (click)="refreshDashboard()">
-  <i class="bi bi-arrow-repeat me-1"></i> Refresh
-</button>
-
+      <i class="bi bi-arrow-repeat me-1"></i> Refresh
+    </button>
   </div>
 
   <!-- Stats Cards -->
@@ -40,15 +39,15 @@
             <option>2024</option>
           </select>
         </div>
-        <div *ngIf="monthlyChartData; else spendingPlaceholder">
-          <canvas id="monthlyChart"></canvas>
-        </div>
-        <ng-template #spendingPlaceholder>
-          <div class="text-center py-4 text-muted">
-            <i class="bi bi-graph-up fs-3"></i>
-            <p class="mb-0">[Chart Placeholder]</p>
+        <div class="position-relative">
+          <!-- Always render canvas -->
+          <canvas #monthlyChart></canvas>
+          <!-- Show placeholder on top until chartData is ready -->
+          <div *ngIf="!monthlyChartData" class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-light">
+            <i class="bi bi-graph-up fs-3 text-muted"></i>
+            <p class="mb-0 ms-2 text-muted">[Chart Placeholder]</p>
           </div>
-        </ng-template>
+        </div>
       </div>
     </div>
 
@@ -56,15 +55,13 @@
     <div class="col-lg-4">
       <div class="card shadow-sm border-0 rounded-3 p-3">
         <h6 class="fw-bold mb-3">Payment Status Summary</h6>
-        <div *ngIf="pieChartData; else piePlaceholder">
-          <canvas id="statusPieChart"></canvas>
-        </div>
-        <ng-template #piePlaceholder>
-          <div class="text-center py-4 text-muted">
-            <i class="bi bi-pie-chart fs-3"></i>
-            <p class="mb-0">[Pie Chart Placeholder]</p>
+        <div class="position-relative">
+          <canvas #statusPieChart></canvas>
+          <div *ngIf="!pieChartData" class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-light">
+            <i class="bi bi-pie-chart fs-3 text-muted"></i>
+            <p class="mb-0 ms-2 text-muted">[Pie Chart Placeholder]</p>
           </div>
-        </ng-template>
+        </div>
       </div>
     </div>
   </div>
@@ -91,9 +88,9 @@
           <td>{{ req.createdAt | date:'mediumDate' }}</td>
           <td>
             <span class="badge" [ngClass]="{
-              'bg-success': req.status === 'ACCEPTED',
               'bg-warning text-dark': req.status === 'PENDING',
-              'bg-danger': req.status === 'REJECTED'
+              'bg-success text-white': req.status === 'ACCEPTED',
+              'bg-danger text-white': req.status === 'REJECTED'
             }">
               {{ req.status | titlecase }}
             </span>
