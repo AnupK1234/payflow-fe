@@ -6,8 +6,9 @@
       <small class="text-muted">Overview of your payment requests and account summary</small>
     </div>
     <button class="btn btn-primary btn-sm" (click)="refreshDashboard()">
-      <i class="bi bi-arrow-repeat me-1"></i> Refresh
-    </button>
+  <i class="bi bi-arrow-repeat me-1"></i> Refresh
+</button>
+
   </div>
 
   <!-- Stats Cards -->
@@ -29,6 +30,7 @@
 
   <!-- Analytics Section -->
   <div class="row g-3 mb-4">
+    <!-- Monthly Chart -->
     <div class="col-lg-8">
       <div class="card shadow-sm border-0 rounded-3 p-3">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -38,21 +40,31 @@
             <option>2024</option>
           </select>
         </div>
-        <div class="text-center py-4 text-muted">
-          <i class="bi bi-graph-up fs-3"></i>
-          <p class="mb-0">[Chart Placeholder]</p>
-          <small>Integrate Chart.js or ApexCharts here later</small>
+        <div *ngIf="monthlyChartData; else spendingPlaceholder">
+          <canvas id="monthlyChart"></canvas>
         </div>
+        <ng-template #spendingPlaceholder>
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-graph-up fs-3"></i>
+            <p class="mb-0">[Chart Placeholder]</p>
+          </div>
+        </ng-template>
       </div>
     </div>
 
+    <!-- Pie Chart -->
     <div class="col-lg-4">
       <div class="card shadow-sm border-0 rounded-3 p-3">
         <h6 class="fw-bold mb-3">Payment Status Summary</h6>
-        <div class="text-center py-4 text-muted">
-          <i class="bi bi-pie-chart fs-3"></i>
-          <p class="mb-0">[Pie Chart Placeholder]</p>
+        <div *ngIf="pieChartData; else piePlaceholder">
+          <canvas id="statusPieChart"></canvas>
         </div>
+        <ng-template #piePlaceholder>
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-pie-chart fs-3"></i>
+            <p class="mb-0">[Pie Chart Placeholder]</p>
+          </div>
+        </ng-template>
       </div>
     </div>
   </div>
