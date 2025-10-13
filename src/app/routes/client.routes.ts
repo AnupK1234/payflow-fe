@@ -44,6 +44,7 @@ import { Routes } from '@angular/router';
 import { ClientLayout } from '../features/client/components/client-layout/client-layout';
 import { ClientDashboard } from '../features/client/components/client-dashboard/client-dashboard';
 import { ClientPaymentRequests } from '../features/client/components/client-payment-requests/client-payment-requests';
+import { ClientPaymentHistory } from '../features/client/components/client-payment-history/client-payment-history';
 
 export const CLIENT_ROUTES: Routes = [
   {
@@ -53,6 +54,7 @@ export const CLIENT_ROUTES: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: ClientDashboard },
       { path: 'payment-requests', component: ClientPaymentRequests },
+       { path: 'payment-history', component: ClientPaymentHistory },
     ]
   }
 ];
