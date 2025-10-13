@@ -185,8 +185,7 @@
                                 <th class="py-3">Organization ID</th>
                                 <th class="py-3">Request Date</th>
                                 <th class="py-3">Status</th>
-                                <th class="py-3">Approved Date</th>
-                                <th class="py-3">Created By</th>
+                                <th class="py-3">Approved/Rejected Date</th>
                                 <th class="py-3">Approved By</th>
                             </tr>
                         </thead>
@@ -242,14 +241,6 @@
                                         <i class="bi bi-dash-circle me-2"></i>
                                         <small>Not yet approved</small>
                                     </span>
-                                    }
-                                </td>
-                                <td class="py-3">
-                                    @if (request.createdById) {
-                                    <span class="badge bg-primary-subtle text-primary">ID: {{ request.createdById
-                                        }}</span>
-                                    } @else {
-                                    <span class="text-muted">N/A</span>
                                     }
                                 </td>
                                 <td class="py-3">
