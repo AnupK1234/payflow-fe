@@ -67,6 +67,14 @@ export const ORGANIZATION_ROUTES: Routes = [
           ).then((m) => m.BatchCreateEmployee),
         title: 'Salary Disburement Request',
       },
+      {
+        path: 'clients',
+        loadComponent: () =>
+          import(
+            '../features/org-admin/components/clients-list/clients-list.component'
+          ).then((m) => m.ClientsListComponent),
+        title: 'Salary Disburement Request',
+      },
     ],
   },
 ];
