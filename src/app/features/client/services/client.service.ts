@@ -16,7 +16,6 @@ export interface DashboardStats {
   failed: number;
   rejected: number;
 }
-
 @Injectable({
   providedIn: 'root'
 })
@@ -25,24 +24,25 @@ export class ClientService {
 
   constructor(private http: HttpClient) {}
 
-  /** Fetch all active bank accounts for a client */
   getClientBankAccounts(clientId: number): Observable<BankAccount[]> {
     return this.http
       .get<BankAccount[]>(`${this.paymentBaseUrl}/client/${clientId}/bank-accounts`)
       .pipe(catchError(err => this.handleError(err, 'Failed to fetch bank accounts')));
   }
 
-  /** Accept a payment request */
   acceptRequest(requestId: number, clientBankAccountId: number): Observable<ClientPaymentRequest> {
     return this.http
-      .post<ClientPaymentRequest>(
-        `${this.paymentBaseUrl}/${requestId}/accept/${clientBankAccountId}`,
-        {}
-      )
+      .post<ClientPaymentRequest>(`${this.paymentBaseUrl}/${requestId}/accept/${clientBankAccountId}`, {})
       .pipe(catchError(err => this.handleError(err, 'Failed to accept payment request')));
   }
 
-  /** Fetch payment history for a client */
+  /** NEW: Reject request */
+  rejectRequest(requestId: number): Observable<ClientPaymentRequest> {
+    return this.http
+      .post<ClientPaymentRequest>(`${this.paymentBaseUrl}/${requestId}/reject`, {})
+      .pipe(catchError(err => this.handleError(err, 'Failed to reject payment request')));
+  }
+
   getPaymentHistory(
     clientId: number,
     startDate?: string,
@@ -59,7 +59,6 @@ export class ClientService {
       .pipe(catchError(err => this.handleError(err, 'Failed to fetch payment history')));
   }
 
-  /** Get recent 5 payment requests */
   getRecentRequests(clientId: number): Observable<ClientPaymentRequest[]> {
     return this.getPaymentHistory(clientId).pipe(
       map(requests => requests.slice(0, 5)),
@@ -67,7 +66,6 @@ export class ClientService {
     );
   }
 
-  /** Compute dashboard stats from payment history */
   getDashboardStats(clientId: number): Observable<DashboardStats> {
     return this.getPaymentHistory(clientId).pipe(
       map((requests: ClientPaymentRequest[]) => ({
@@ -82,7 +80,6 @@ export class ClientService {
     );
   }
 
-  /** Error handler */
   private handleError(err: any, defaultMessage: string): Observable<never> {
     console.error(defaultMessage, err);
     const message = err?.error?.message || defaultMessage;

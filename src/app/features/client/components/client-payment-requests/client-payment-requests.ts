@@ -1,4 +1,5 @@
 
+
 // import { Component, OnInit } from '@angular/core';
 // import { CommonModule } from '@angular/common';
 // import { FormsModule } from '@angular/forms';
@@ -41,7 +42,6 @@
 //     }
 //   }
 
-  
 //   private loadClientIdFromCookie(): void {
 //     const match = document.cookie.match(new RegExp('(^| )user=([^;]+)'));
 //     if (!match) return;
@@ -54,7 +54,7 @@
 //     }
 //   }
 
-  
+//   /** Load only pending payment requests */
 //   private loadDashboardData(): void {
 //     this.isLoading = true;
 //     this.errorMessage = '';
@@ -81,11 +81,8 @@
 //     }).subscribe(({ accounts, requests, stats }) => {
 //       this.bankAccounts = accounts ?? [];
 
-     
-//       this.paymentRequests = requests.map(req => ({
-//         ...req,
-//         clientBankAccounts: req.clientBankAccounts ?? this.bankAccounts
-//       }));
+//       // Only show PENDING requests
+//       this.paymentRequests = (requests ?? []).filter(r => r.status === 'PENDING');
 
 //       this.stats = stats;
 //       this.isLoading = false;
@@ -95,7 +92,6 @@
 //   refresh(): void {
 //     this.loadDashboardData();
 //   }
-
 
 //   acceptRequest(request: ClientPaymentRequest): void {
 //     if (!request.clientBankAccountId) {
@@ -110,9 +106,10 @@
 //       })
 //     ).subscribe(result => {
 //       if (result) {
-        
+//         // Remove accepted request from pending list
 //         this.paymentRequests = this.paymentRequests.filter(r => r.id !== request.id);
-      
+
+//         // Update dashboard stats
 //         this.clientService.getDashboardStats(this.clientId).subscribe({
 //           next: stats => this.stats = stats,
 //           error: err => console.error('Error updating stats:', err)
@@ -121,13 +118,6 @@
 //     });
 //   }
 // }
-
-
-
-
-
-
-
 
 
 import { Component, OnInit } from '@angular/core';
@@ -184,7 +174,6 @@ export class ClientPaymentRequests implements OnInit {
     }
   }
 
-  /** Load only pending payment requests */
   private loadDashboardData(): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -210,10 +199,7 @@ export class ClientPaymentRequests implements OnInit {
       )
     }).subscribe(({ accounts, requests, stats }) => {
       this.bankAccounts = accounts ?? [];
-
-      // Only show PENDING requests
       this.paymentRequests = (requests ?? []).filter(r => r.status === 'PENDING');
-
       this.stats = stats;
       this.isLoading = false;
     });
@@ -236,15 +222,31 @@ export class ClientPaymentRequests implements OnInit {
       })
     ).subscribe(result => {
       if (result) {
-        // Remove accepted request from pending list
         this.paymentRequests = this.paymentRequests.filter(r => r.id !== request.id);
-
-        // Update dashboard stats
-        this.clientService.getDashboardStats(this.clientId).subscribe({
-          next: stats => this.stats = stats,
-          error: err => console.error('Error updating stats:', err)
-        });
+        this.updateStats();
       }
+    });
+  }
+
+  // New reject function
+  rejectRequest(request: ClientPaymentRequest): void {
+    this.clientService.rejectRequest(request.id).pipe(
+      catchError(err => {
+        this.errorMessage = err.message || 'Failed to reject payment request';
+        return of(null);
+      })
+    ).subscribe(result => {
+      if (result) {
+        this.paymentRequests = this.paymentRequests.filter(r => r.id !== request.id);
+        this.updateStats();
+      }
+    });
+  }
+
+  private updateStats(): void {
+    this.clientService.getDashboardStats(this.clientId).subscribe({
+      next: stats => this.stats = stats,
+      error: err => console.error('Error updating stats:', err)
     });
   }
 }
