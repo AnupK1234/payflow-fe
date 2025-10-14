@@ -38,7 +38,7 @@
         <td class="p-2 border">₹{{ req.amount }}</td>
         <td class="p-2 border">{{ req.createdAt | date: 'medium' }}</td>
         <td class="p-2 border">{{ req.status }}</td>
-        <td class="p-2 border">{{ req.description || '-' }}</td>
+        <td class="p-2 border">{{ req.reason || '-' }}</td>
       </tr>
       <tr *ngIf="!isLoading && paymentHistory.length === 0">
         <td colspan="5" class="text-center p-4 text-gray-500">No records found</td>

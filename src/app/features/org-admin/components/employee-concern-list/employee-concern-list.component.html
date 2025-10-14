@@ -42,7 +42,7 @@
                         <select class="form-select form-select-sm" [value]="c.status"
                             (change)="onStatusChange(c, $event)">
                             @for (s of statuses; track s) {
-                            <option [value]="s">{{ s }}</option>
+                            <option [value]="s" [disabled]="s === 'SELECT'">{{ s }}</option>
                             }
                         </select>
                     </td>
