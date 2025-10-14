@@ -1,0 +1,200 @@
+<!-- Alert Messages -->
+<div class="container-fluid mt-3">
+    @if (successMessage) {
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>{{ successMessage }}
+        <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Close"></button>
+    </div>
+    }
+
+    @if (errorMessage) {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errorMessage }}
+        <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+    </div>
+    }
+</div>
+
+<!-- Main Content -->
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="mb-0">Batch Employee Import</h2>
+            <p class="text-muted">Upload CSV file to import multiple employees at once</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Upload Section -->
+        <div class="col-lg-8">
+            <!-- Instructions Card -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-info-circle text-primary me-2"></i>Before You Upload
+                    </h5>
+                    <ul class="mb-3">
+                        <li>Ensure your CSV file follows the correct format</li>
+                        <li>Maximum file size: 10MB</li>
+                        <li>Only CSV files are accepted</li>
+                        <li>The batch process will run asynchronously</li>
+                        <li>You'll be notified once the import is complete</li>
+                    </ul>
+                    <button class="btn btn-outline-primary btn-sm" (click)="downloadSampleCsv()">
+                        <i class="bi bi-download me-2"></i>Download Sample CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upload Card -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Upload Employee Data</h5>
+
+                    <!-- Drag & Drop Area -->
+                    <div class="upload-zone" [class.has-file]="selectedFile" (dragover)="onDragOver($event)"
+                        (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+
+                        <input type="file" #fileInput id="fileInput" accept=".csv" (change)="onFileSelected($event)"
+                            style="display: none;">
+
+                        @if (!selectedFile) {
+                        <div class="upload-content" (click)="fileInput.click()">
+                            <i class="bi bi-cloud-upload upload-icon"></i>
+                            <h5 class="mt-3">Drop your CSV file here</h5>
+                            <p class="text-muted">or click to browse</p>
+                            <small class="text-muted">Supported format: CSV (Max 10MB)</small>
+                        </div>
+                        }
+
+                        @if (selectedFile) {
+                        <div class="file-info">
+                            <i class="bi bi-file-earmark-spreadsheet file-icon text-success"></i>
+                            <div class="file-details">
+                                <h6 class="mb-1">{{ fileName }}</h6>
+                                <small class="text-muted">{{ getFileSizeInMB(selectedFile.size) }} MB</small>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                (click)="removeFile(); $event.stopPropagation()">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Progress Bar -->
+                    @if (isUploading || uploadProgress > 0) {
+                    <div class="progress mt-3" style="height: 25px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                            [class.bg-success]="uploadProgress === 100" role="progressbar"
+                            [style.width.%]="uploadProgress" [attr.aria-valuenow]="uploadProgress" aria-valuemin="0"
+                            aria-valuemax="100">
+                            {{ uploadProgress }}%
+                        </div>
+                    </div>
+                    }
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button class="btn btn-secondary" (click)="removeFile()"
+                            [disabled]="!selectedFile || isUploading">
+                            <i class="bi bi-x-circle me-2"></i>Clear
+                        </button>
+                        <button class="btn btn-primary" (click)="uploadFile()"
+                            [disabled]="!selectedFile || isUploading">
+                            @if (isUploading) {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            @if (!isUploading) {
+                            <i class="bi bi-upload me-2"></i>
+                            }
+                            {{ isUploading ? 'Uploading...' : 'Upload & Process' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload History Sidebar -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-clock-history me-2"></i>Upload History
+                        </h5>
+                        @if (uploadHistory.length > 0) {
+                        <button class="btn btn-sm btn-outline-secondary" (click)="clearHistory()">
+                            Clear
+                        </button>
+                        }
+                    </div>
+
+                    @if (uploadHistory.length === 0) {
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox fs-1 text-muted opacity-25"></i>
+                        <p class="text-muted mt-2 mb-0">No upload history</p>
+                    </div>
+                    }
+
+                    @if (uploadHistory.length > 0) {
+                    <div class="upload-history">
+                        @for (record of uploadHistory; track record.timestamp) {
+                        <div class="history-item" [class.success]="record.status === 'Success'"
+                            [class.failed]="record.status === 'Failed'">
+
+                            <div class="d-flex align-items-start">
+                                <i class="bi me-2 mt-1" [class.bi-check-circle-fill]="record.status === 'Success'"
+                                    [class.bi-x-circle-fill]="record.status === 'Failed'"
+                                    [class.text-success]="record.status === 'Success'"
+                                    [class.text-danger]="record.status === 'Failed'"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold small">{{ record.fileName }}</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">
+                                        {{ formatDate(record.timestamp) }}
+                                    </div>
+                                    <div class="small mt-1" [class.text-success]="record.status === 'Success'"
+                                        [class.text-danger]="record.status === 'Failed'">
+                                        {{ record.message }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <!-- CSV Format Guide -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="bi bi-file-text me-2"></i>CSV Format Guide
+                    </h6>
+                    <div class="format-guide">
+                        <p class="small mb-2"><strong>Required Columns:</strong></p>
+                        <ul class="small mb-2">
+                            <li>firstName</li>
+                            <li>lastName</li>
+                            <li>email</li>
+                            <li>phone</li>
+                            <li>dateOfBirth</li>
+                            <li>gender</li>
+                            <li>department</li>
+                            <li>designation</li>
+                            <li>joiningDate</li>
+                            <li>salary</li>
+                        </ul>
+                        <p class="small mb-2"><strong>Optional Columns:</strong></p>
+                        <ul class="small mb-0">
+                            <li>bankAccountNumber</li>
+                            <li>bankIfsc</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
