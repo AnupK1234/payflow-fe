@@ -44,6 +44,13 @@ export const ORGANIZATION_ROUTES: Routes = [
         title: 'Employee Concerns - Organization',
       },
       {
+        path: 'employees/:id/salary-structures',
+        loadComponent: () =>
+          import(
+            '../features/org-admin/components/employee-salary-structures/employee-salary-structures.component'
+          ).then((m) => m.EmployeeSalaryStructuresComponent),
+      },
+      {
         path: 'employees/:id',
         loadComponent: () =>
           import(
@@ -70,9 +77,9 @@ export const ORGANIZATION_ROUTES: Routes = [
       {
         path: 'clients',
         loadComponent: () =>
-          import(
-            '../features/org-admin/components/clients-list/clients-list.component'
-          ).then((m) => m.ClientsListComponent),
+          import('../features/org-admin/components/clients-list/clients-list.component').then(
+            (m) => m.ClientsListComponent
+          ),
         title: 'Salary Disburement Request',
       },
     ],
