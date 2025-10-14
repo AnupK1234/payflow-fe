@@ -57,7 +57,7 @@ export class EmployeeDetailsComponent {
   loadEmployee() {
     if (!this.id()) return;
     this.loading.set(true);
-    
+
     this.employeeService.getEmployeeById(this.id()!).subscribe({
       next: (data) => {
         this.employee.set(data);
@@ -87,6 +87,11 @@ export class EmployeeDetailsComponent {
   }
 
   backToDashboard() {
-    this.router.navigate(['/bank-admin/employees']);
+    this.router.navigate(['/organization/employees']);
+  }
+
+  viewSalaryStructures() {
+    if (!this.id()) return;
+    this.router.navigate([`/organization/employees/${this.id()}/salary-structures`]);
   }
 }

@@ -145,13 +145,20 @@ export class EmployeeService {
   }
 
   // get employee concern by org id
-  getConcernList() : Observable<Concern[]>{
-    const organizationId = JSON.parse(this.cookie.get("user"))?.organizationId;
-    return this.http.get<Concern[]>(`${this.baseUrl}/concerns/organization/${organizationId}`)
+  getConcernList(): Observable<Concern[]> {
+    const organizationId = JSON.parse(this.cookie.get('user'))?.organizationId;
+    return this.http.get<Concern[]>(`${this.baseUrl}/concerns/organization/${organizationId}`);
   }
 
   updateConcernStatus(id: number, body: { status: string }) {
-  return this.http.put(`${this.baseUrl}/concerns/${id}/status`, body);
-}
+    return this.http.put(`${this.baseUrl}/concerns/${id}/status`, body);
+  }
 
+  getEmployeeSalaryStructures(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${id}/salary-structures`);
+  }
+
+  addEmployeeSalaryStructure(id: number, body: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${id}/salary-structures`, body);
+  }
 }

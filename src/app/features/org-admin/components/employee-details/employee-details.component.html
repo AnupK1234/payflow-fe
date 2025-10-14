@@ -64,11 +64,16 @@
 
         @if (editMode()) {
         <div class="mt-4 text-end">
-            <button class="btn btn-success" (click)="saveChanges()" [disabled]="form.invalid">
+            <button class="btn btn-success me-2" (click)="saveChanges()" [disabled]="form.invalid">
                 💾 Save Changes
             </button>
         </div>
         }
+
+        <button class="btn btn-outline-primary mt-2" (click)="viewSalaryStructures()">
+            📊 View Salary Structures
+        </button>
+
     </form>
     } @else {
     <p class="text-muted">No employee found.</p>
