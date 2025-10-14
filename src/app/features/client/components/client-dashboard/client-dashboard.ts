@@ -160,14 +160,11 @@
 //   }
 // }
 
-
-
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule, NgForOf, NgIf, AsyncPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ClientService, DashboardStats } from '../../services/client.service';
 import { ClientPaymentRequest } from '../../models/client-payment-request.model';
-import { CookieService } from 'ngx-cookie-service';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -187,7 +184,6 @@ interface StatCard {
   styleUrls: ['./client-dashboard.css'],
 })
 export class ClientDashboard implements OnInit {
-  clientId = 0;
   statsArray: StatCard[] = [];
   recentRequests: ClientPaymentRequest[] = [];
   isLoading = false;
@@ -202,30 +198,10 @@ export class ClientDashboard implements OnInit {
   @ViewChild('statusPieChart') pieCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('monthlyChart') monthlyCanvas!: ElementRef<HTMLCanvasElement>;
 
-  constructor(
-    private clientService: ClientService,
-    private cookieService: CookieService
-  ) {}
+  constructor(private clientService: ClientService) {}
 
   ngOnInit(): void {
-    this.loadClientIdFromCookie();
-    if (!this.clientId) {
-      this.errorMessage = 'Invalid client ID. Please log in again.';
-      return;
-    }
     this.loadDashboard();
-  }
-
-  private loadClientIdFromCookie(): void {
-    try {
-      const userData = this.cookieService.get('user');
-      if (userData) {
-        const user = JSON.parse(userData);
-        this.clientId = user?.clientId || 0;
-      }
-    } catch (error) {
-      console.error('Error parsing cookie:', error);
-    }
   }
 
   loadDashboard(): void {
@@ -233,7 +209,7 @@ export class ClientDashboard implements OnInit {
     this.errorMessage = '';
 
     // Fetch recent requests
-    this.clientService.getRecentRequests(this.clientId).subscribe({
+    this.clientService.getRecentRequests().subscribe({
       next: (res) => {
         this.recentRequests = res;
         this.initMonthlyChart(); // Monthly chart based on recent requests
@@ -242,7 +218,7 @@ export class ClientDashboard implements OnInit {
     });
 
     // Fetch dashboard stats
-    this.clientService.getDashboardStats(this.clientId).subscribe({
+    this.clientService.getDashboardStats().subscribe({
       next: (res: DashboardStats) => {
         this.statsArray = [
           { label: 'Total Requests', value: res.totalRequests, icon: 'bi bi-receipt', bg: 'bg-primary text-white' },
@@ -290,7 +266,6 @@ export class ClientDashboard implements OnInit {
     if (!this.monthlyCanvas) return;
     if (this.monthlyChart) this.monthlyChart.destroy();
 
-    // Compute monthly totals from recentRequests
     const monthlyTotals = Array(12).fill(0);
     const currentYear = new Date().getFullYear();
 
