@@ -63,8 +63,8 @@ export const ORGANIZATION_ROUTES: Routes = [
         path: 'batch-create',
         loadComponent: () =>
           import(
-            '../features/org-admin/components/employee-batch-create/employee-batch-create.component'
-          ).then((m) => m.BatchCreateEmployee),
+            '../features/org-admin/components/employee-batch-upload/employee-batch-upload.component'
+          ).then((m) => m.EmployeeBatchUploadComponent),
         title: 'Salary Disburement Request',
       },
       {
