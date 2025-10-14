@@ -44,13 +44,13 @@
                 <label class="form-label">Status</label>
                 <input type="text" class="form-control" formControlName="status" [readonly]="!editMode()" />
             </div>
-            <div class="col-md-6">
+            <div formGroupName="bankAccount" class="col-md-6">
                 <label class="form-label">Bank Account No.</label>
-                <input type="text" class="form-control" formControlName="bankAccountNumber" [readonly]="!editMode()" />
+                <input type="text" class="form-control" formControlName="accountNumber" [readonly]="!editMode()" />
             </div>
-            <div class="col-md-6">
+            <div formGroupName="bankAccount" class="col-md-6">
                 <label class="form-label">IFSC Code</label>
-                <input type="text" class="form-control" formControlName="ifscCode" [readonly]="!editMode()" />
+                <input type="text" class="form-control" formControlName="ifsc" [readonly]="!editMode()" />
             </div>
             <div class="col-md-6">
                 <label class="form-label">Aadhaar</label>
