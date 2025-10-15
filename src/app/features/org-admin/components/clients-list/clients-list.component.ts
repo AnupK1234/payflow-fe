@@ -8,11 +8,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { ClientsService, Client, ClientRequest } from '../../services/clients.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-clients-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ReactiveFormsModule, FormsModule, RouterLink],
   templateUrl: './clients-list.component.html',
   styleUrls: ['./clients-list.component.css'],
 })

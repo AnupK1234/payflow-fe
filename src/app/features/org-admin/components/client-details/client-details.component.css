@@ -1,0 +1,189 @@
+.info-item {
+    margin-bottom: 1.25rem;
+}
+
+.info-item:last-child {
+    margin-bottom: 0;
+}
+
+.info-item label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 0.375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-item p {
+    margin-bottom: 0;
+    color: #212529;
+    font-size: 1rem;
+}
+
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-header {
+    padding: 1.25rem 1.5rem;
+}
+
+.card-header h5 {
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+
+.badge {
+    padding: 0.5rem 0.875rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+
+.d-grid .btn {
+    text-align: left;
+    justify-content: flex-start;
+    padding: 0.75rem 1rem;
+}
+
+.d-grid .btn i {
+    width: 1.25rem;
+}
+
+
+.modal {
+    overflow-y: auto !important;
+}
+
+.modal-dialog {
+    margin: 1.75rem auto;
+}
+
+.modal-content {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    border-bottom: 2px solid #e9ecef;
+    padding: 1.25rem 1.5rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 2px solid #e9ecef;
+    padding: 1rem 1.5rem;
+}
+
+
+.input-group-text {
+    font-weight: 600;
+    background-color: #f8f9fa;
+}
+
+
+.alert {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+
+a {
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: #0056b3 !important;
+}
+
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+
+.btn-outline-secondary:hover {
+    transform: translateX(-2px);
+}
+
+
+.bi-building,
+.bi-person,
+.bi-geo-alt,
+.bi-lightning,
+.bi-cash-coin {
+    font-size: 1.1rem;
+}
+
+
+@media (max-width: 992px) {
+    .card-body {
+        padding: 1rem;
+    }
+
+    .info-item {
+        margin-bottom: 1rem;
+    }
+
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+}
+
+
+.bi-exclamation-triangle {
+    opacity: 0.5;
+}
+
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+
+.invalid-feedback {
+    font-size: 0.875rem;
+}
+
+
+.alert-secondary strong {
+    font-size: 1.1rem;
+}
+
+
+.btn {
+    transition: all 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+
+.gap-2 {
+    gap: 0.5rem;
+}
