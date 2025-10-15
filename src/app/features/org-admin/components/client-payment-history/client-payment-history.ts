@@ -62,8 +62,8 @@ export class ClientPaymentHistoryComponent implements OnInit {
     switch (status) {
       case 'ACCEPTED': return 'status-accepted';
       case 'PENDING': return 'status-pending';
-      case 'PAID': return 'status-paid';
-      case 'FAILED': return 'status-failed';
+      //case 'PAID': return 'status-paid';
+      //case 'FAILED': return 'status-failed';
       case 'REJECTED': return 'status-rejected';
       default: return 'status-default';
     }
