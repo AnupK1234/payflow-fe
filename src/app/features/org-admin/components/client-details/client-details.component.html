@@ -1,0 +1,335 @@
+<!-- Alert Messages -->
+<div class="container-fluid mt-3">
+    @if (successMessage) {
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>{{ successMessage }}
+        <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Close"></button>
+    </div>
+    }
+
+    @if (errorMessage) {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errorMessage }}
+        <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+    </div>
+    }
+</div>
+
+<!-- Main Content -->
+<div class="container-fluid">
+    <!-- Header with Back Button -->
+    <div class="row mb-4">
+        <div class="col">
+            <button class="btn btn-outline-secondary btn-sm mb-3" (click)="goBack()">
+                <i class="bi bi-arrow-left me-2"></i>Back to Clients
+            </button>
+            <h2 class="mb-0">Client Details</h2>
+            <p class="text-muted">View and manage client information</p>
+        </div>
+        <div class="col-auto">
+            @if (client) {
+            <button class="btn btn-primary" (click)="openPaymentRequestModal()">
+                <i class="bi bi-cash-coin me-2"></i>Request Payment
+            </button>
+            }
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading) {
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-muted">Loading client details...</p>
+    </div>
+    }
+
+    <!-- Client Details -->
+    @if (!isLoading && client) {
+    <div class="row">
+        <!-- Company Information Card -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="bi bi-building me-2 text-primary"></i>Company Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <label>Company Name</label>
+                        <p class="fw-semibold">{{ client.companyName }}</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Status</label>
+                        <p>
+                            <span class="badge" [ngClass]="{
+                  'bg-success': client.status === 'ACTIVE',
+                  'bg-secondary': client.status === 'INACTIVE'
+                }">
+                                {{ client.status }}
+                            </span>
+                        </p>
+                    </div>
+                    @if (client.organizationName) {
+                    <div class="info-item">
+                        <label>Organization</label>
+                        <p>{{ client.organizationName }}</p>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information Card -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person me-2 text-primary"></i>Contact Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <label>Contact Person</label>
+                        <p class="fw-semibold">{{ client.contactPersonName }}</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Email</label>
+                        <p>
+                            <a [href]="'mailto:' + client.contactEmail" class="text-decoration-none">
+                                <i class="bi bi-envelope me-2"></i>{{ client.contactEmail }}
+                            </a>
+                        </p>
+                    </div>
+                    <div class="info-item">
+                        <label>Phone</label>
+                        <p>
+                            <a [href]="'tel:' + client.contactPhone" class="text-decoration-none">
+                                <i class="bi bi-telephone me-2"></i>{{ client.contactPhone }}
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Address Information Card -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="bi bi-geo-alt me-2 text-primary"></i>Address Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (client.address || client.city || client.state || client.country || client.postalCode) {
+                    @if (client.address) {
+                    <div class="info-item">
+                        <label>Address</label>
+                        <p>{{ client.address }}</p>
+                    </div>
+                    }
+                    <div class="row">
+                        @if (client.city) {
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label>City</label>
+                                <p>{{ client.city }}</p>
+                            </div>
+                        </div>
+                        }
+                        @if (client.state) {
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label>State</label>
+                                <p>{{ client.state }}</p>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    <div class="row">
+                        @if (client.country) {
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label>Country</label>
+                                <p>{{ client.country }}</p>
+                            </div>
+                        </div>
+                        }
+                        @if (client.postalCode) {
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label>Postal Code</label>
+                                <p>{{ client.postalCode }}</p>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    } @else {
+                    <p class="text-muted">No address information available</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Card -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightning me-2 text-primary"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" (click)="openPaymentRequestModal()">
+                            <i class="bi bi-cash-coin me-2"></i>Request Payment
+                        </button>
+                        <button class="btn btn-outline-secondary" (click)="editClient()">
+                            <i class="bi bi-pencil me-2"></i>Edit Client Details
+                        </button>
+                        <a [href]="'mailto:' + client.contactEmail" class="btn btn-outline-info">
+                            <i class="bi bi-envelope me-2"></i>Send Email
+                        </a>
+                        <a [href]="'tel:' + client.contactPhone" class="btn btn-outline-success">
+                            <i class="bi bi-telephone me-2"></i>Call Client
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Error State -->
+    @if (!isLoading && !client && errorMessage) {
+    <div class="text-center py-5">
+        <i class="bi bi-exclamation-triangle fs-1 text-danger"></i>
+        <p class="mt-3 text-muted">Unable to load client details</p>
+        <button class="btn btn-primary" (click)="goBack()">Go Back to Clients</button>
+    </div>
+    }
+</div>
+
+<!-- Payment Request Modal -->
+<div class="modal fade" [class.show]="showPaymentModal" [style.display]="showPaymentModal ? 'block' : 'none'"
+    tabindex="-1" style="overflow-y: auto;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-cash-coin me-2"></i>Send Payment Request
+                </h5>
+                <button type="button" class="btn-close" (click)="closePaymentRequestModal()"></button>
+            </div>
+            <form [formGroup]="paymentRequestForm" (ngSubmit)="submitPaymentRequest()">
+                <div class="modal-body">
+                    @if (client) {
+                    <div class="alert alert-info mb-4">
+                        <strong>Client:</strong> {{ client.companyName }} ({{ client.contactPersonName }})
+                    </div>
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Amount <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" class="form-control" formControlName="amount" placeholder="0.00"
+                                    step="0.01" [class.is-invalid]="isFieldInvalid('amount')">
+                            </div>
+                            @if (isFieldInvalid('amount')) {
+                            <div class="invalid-feedback d-block">
+                                {{ getErrorMessage('amount') }}
+                            </div>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Tax Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" class="form-control" formControlName="taxAmount" placeholder="0.00"
+                                    step="0.01" [class.is-invalid]="isFieldInvalid('taxAmount')">
+                            </div>
+                            @if (isFieldInvalid('taxAmount')) {
+                            <div class="invalid-feedback d-block">
+                                {{ getErrorMessage('taxAmount') }}
+                            </div>
+                            }
+                        </div>
+                    </div>
+
+                    @if (paymentRequestForm.get('amount')?.value || paymentRequestForm.get('taxAmount')?.value) {
+                    <div class="alert alert-secondary mb-3">
+                        <strong>Total Amount:</strong> ₹{{ getTotalAmount().toFixed(2) }}
+                    </div>
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Due Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" formControlName="dueDate"
+                                [class.is-invalid]="isFieldInvalid('dueDate')">
+                            @if (isFieldInvalid('dueDate')) {
+                            <div class="invalid-feedback">
+                                {{ getErrorMessage('dueDate') }}
+                            </div>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Invoice Number</label>
+                            <input type="text" class="form-control" formControlName="invoiceNumber"
+                                placeholder="INV-001" [class.is-invalid]="isFieldInvalid('invoiceNumber')">
+                            @if (isFieldInvalid('invoiceNumber')) {
+                            <div class="invalid-feedback">
+                                {{ getErrorMessage('invoiceNumber') }}
+                            </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Reason <span class="text-danger">*</span></label>
+                        <textarea class="form-control" formControlName="reason" rows="3"
+                            placeholder="Payment for services rendered..."
+                            [class.is-invalid]="isFieldInvalid('reason')"></textarea>
+                        @if (isFieldInvalid('reason')) {
+                        <div class="invalid-feedback">
+                            {{ getErrorMessage('reason') }}
+                        </div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea class="form-control" formControlName="notes" rows="2"
+                            placeholder="Any additional information..."
+                            [class.is-invalid]="isFieldInvalid('notes')"></textarea>
+                        @if (isFieldInvalid('notes')) {
+                        <div class="invalid-feedback">
+                            {{ getErrorMessage('notes') }}
+                        </div>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closePaymentRequestModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="isLoadingPayment">
+                        @if (isLoadingPayment) {
+                        <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        @if (!isLoadingPayment) {
+                        <i class="bi bi-send me-2"></i>
+                        }
+                        {{ isLoadingPayment ? 'Sending...' : 'Send Payment Request' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@if (showPaymentModal) {
+<div class="modal-backdrop fade show"></div>
+}

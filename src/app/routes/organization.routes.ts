@@ -82,6 +82,14 @@ export const ORGANIZATION_ROUTES: Routes = [
           ),
         title: 'Salary Disburement Request',
       },
+      {
+        path: 'clients/:id',
+        loadComponent: () =>
+          import('../features/org-admin/components/client-details/client-details.component').then(
+            (m) => m.ClientDetailsComponent
+          ),
+        title: 'Client Details',
+      },
       { path: 'salary-account-requests', 
         loadComponent: () =>
           import('../features/org-admin/components/salary-account-requests/salary-account-requests.component').then(
