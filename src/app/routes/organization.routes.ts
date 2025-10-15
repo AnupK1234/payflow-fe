@@ -44,6 +44,13 @@ export const ORGANIZATION_ROUTES: Routes = [
         title: 'Employee Concerns - Organization',
       },
       {
+        path: 'employees/:id/salary-structures',
+        loadComponent: () =>
+          import(
+            '../features/org-admin/components/employee-salary-structures/employee-salary-structures.component'
+          ).then((m) => m.EmployeeSalaryStructuresComponent),
+      },
+      {
         path: 'employees/:id',
         loadComponent: () =>
           import(
@@ -63,18 +70,33 @@ export const ORGANIZATION_ROUTES: Routes = [
         path: 'batch-create',
         loadComponent: () =>
           import(
-            '../features/org-admin/components/employee-batch-create/employee-batch-create.component'
-          ).then((m) => m.BatchCreateEmployee),
+            '../features/org-admin/components/employee-batch-upload/employee-batch-upload.component'
+          ).then((m) => m.EmployeeBatchUploadComponent),
         title: 'Salary Disburement Request',
       },
       {
         path: 'clients',
         loadComponent: () =>
-          import(
-            '../features/org-admin/components/clients-list/clients-list.component'
-          ).then((m) => m.ClientsListComponent),
+          import('../features/org-admin/components/clients-list/clients-list.component').then(
+            (m) => m.ClientsListComponent
+          ),
         title: 'Salary Disburement Request',
       },
+      {
+        path: 'clients/:id',
+        loadComponent: () =>
+          import('../features/org-admin/components/client-details/client-details.component').then(
+            (m) => m.ClientDetailsComponent
+          ),
+        title: 'Client Details',
+      },
+      { path: 'salary-account-requests', 
+        loadComponent: () =>
+          import('../features/org-admin/components/salary-account-requests/salary-account-requests.component').then(
+            (m) => m.SalaryAccountRequestsComponent
+          ),
+        title: 'Salary Account Request',}
+
     ],
   },
 ];

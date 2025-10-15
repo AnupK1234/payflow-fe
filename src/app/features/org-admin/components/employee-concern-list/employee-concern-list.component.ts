@@ -18,7 +18,7 @@ export class ConcernsListComponent {
   concerns = signal<Concern[]>([]);
   loading = signal(false);
   error = signal('');
-  statuses: ConcernStatus[] = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'REJECTED'];
+  statuses = ['SELECT', 'OPEN', 'IN_PROGRESS', 'RESOLVED', 'REJECTED'];
 
   ngOnInit() {
     this.loadConcerns();

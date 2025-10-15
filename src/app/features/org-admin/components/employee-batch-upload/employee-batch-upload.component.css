@@ -1,0 +1,210 @@
+/* Upload Zone Styling */
+.upload-zone {
+    border: 2px dashed #dee2e6;
+    border-radius: 0.5rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-zone:hover {
+    border-color: #0d6efd;
+    background-color: #e7f1ff;
+}
+
+.upload-zone.has-file {
+    border-color: #198754;
+    background-color: #d1e7dd;
+}
+
+.upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    cursor: pointer;
+}
+
+.upload-icon {
+    font-size: 4rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.upload-zone:hover .upload-icon {
+    color: #0d6efd;
+}
+
+/* File Info Display */
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 0.375rem;
+}
+
+.file-icon {
+    font-size: 2.5rem;
+}
+
+.file-details {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.file-details h6 {
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+}
+
+/* Upload History */
+.upload-history {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.history-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.history-item:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.history-item.success {
+    background-color: #f0f9f4;
+    border-color: #d1e7dd;
+}
+
+.history-item.failed {
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+}
+
+/* Format Guide */
+.format-guide {
+    font-size: 0.875rem;
+}
+
+.format-guide ul {
+    padding-left: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.format-guide li {
+    font-family: 'Courier New', monospace;
+    color: #495057;
+    margin-bottom: 0.25rem;
+}
+
+/* Progress Bar */
+.progress {
+    border-radius: 0.375rem;
+    overflow: hidden;
+}
+
+.progress-bar {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+/* Card Enhancements */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Alert Styling */
+.alert {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Button Enhancements */
+.btn {
+    transition: all 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+/* Scrollbar Styling */
+.upload-history::-webkit-scrollbar {
+    width: 6px;
+}
+
+.upload-history::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.upload-history::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.upload-history::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .upload-zone {
+        padding: 2rem 1rem;
+    }
+
+    .upload-icon {
+        font-size: 3rem;
+    }
+
+    .file-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .file-details {
+        text-align: center;
+    }
+}
+
+/* Loading State */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+/* Instructions List */
+ul {
+    line-height: 1.8;
+}
+
+/* Icon Sizes */
+.bi-info-circle,
+.bi-clock-history,
+.bi-file-text {
+    font-size: 1.1rem;
+}
+
+/* Gap Utility (for older browsers) */
+.gap-2 {
+    gap: 0.5rem;
+}
+
+/* File Size Display */
+small.text-muted {
+    font-size: 0.8rem;
+}
