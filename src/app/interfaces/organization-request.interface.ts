@@ -8,7 +8,6 @@ export interface OrganizationRequest {
   name: string;
   registrationNumber: string;
   address: string;
-  bankAccount: BankAccountDetails;
   adminUsername: string;
   adminEmail: string;
   tempPassword: string;
