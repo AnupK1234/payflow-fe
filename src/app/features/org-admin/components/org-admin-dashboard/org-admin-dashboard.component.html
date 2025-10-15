@@ -1,1 +1,112 @@
-<div>THIS IS ORGANZIATION DASHBOARD</div>
+<div class="dashboard-container p-3">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h3 class="fw-bold mb-0">Organization Admin Dashboard</h3>
+      <small class="text-muted">Last updated: {{ lastUpdated | date:'mediumTime' }}</small>
+    </div>
+    <button class="btn btn-primary btn-sm" (click)="refreshDashboard()">
+      <i class="bi bi-arrow-repeat me-1"></i> Refresh
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3" *ngFor="let stat of statsArray">
+      <div class="card shadow-sm border-0 rounded-3 p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted mb-1">{{ stat.label }}</h6>
+            <h4 class="fw-bold">{{ stat.value }}</h4>
+          </div>
+          <div class="icon-circle d-flex align-items-center justify-content-center {{ stat.bg }}">
+            <i class="{{ stat.icon }}"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analytics Section -->
+  <div class="row g-3 mb-4">
+
+    <!-- Pie Chart -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0 rounded-3 p-3 h-100">
+        <h6 class="fw-bold mb-3">Requests Distribution</h6>
+        <div class="position-relative">
+          <canvas baseChart
+            [data]="pieChartData"
+            [type]="'pie'"
+            [options]="pieChartOptions">
+          </canvas>
+          <div *ngIf="!pieChartData.datasets[0].data.length" 
+               class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-light">
+            <i class="bi bi-pie-chart fs-3 text-muted"></i>
+            <p class="mb-0 ms-2 text-muted">[Pie Chart Placeholder]</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Line Chart -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0 rounded-3 p-3 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold mb-0">Requests Over Time</h6>
+          <select class="form-select form-select-sm w-auto" (change)="loadDashboardData()">
+            <option>2025</option>
+            <option>2024</option>
+          </select>
+        </div>
+        <div class="position-relative">
+          <canvas baseChart
+            [data]="lineChartData"
+            [type]="'line'"
+            [options]="lineChartOptions">
+          </canvas>
+          <div *ngIf="!lineChartData.datasets[0].data.length" 
+               class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-light">
+            <i class="bi bi-graph-up fs-3 text-muted"></i>
+            <p class="mb-0 ms-2 text-muted">[Line Chart Placeholder]</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Recent Requests Table -->
+  <div class="card shadow-sm border-0 rounded-3 p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h6 class="fw-bold mb-0">Recent Salary Requests</h6>
+      <a routerLink="/org-admin/requests" class="text-primary small">View All</a>
+    </div>
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Request ID</th>
+          <th>Status</th>
+          <th>Requested At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let req of recentRequests">
+          <td>{{ req.id }}</td>
+          <td>
+            <span class="badge" [ngClass]="{
+              'bg-success': req.status === 'APPROVED',
+              'bg-warning text-dark': req.status === 'PENDING',
+              'bg-danger': req.status === 'REJECTED'
+            }">
+              {{ req.status }}
+            </span>
+          </td>
+          <td>{{ req.requestDate | date:'medium' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
