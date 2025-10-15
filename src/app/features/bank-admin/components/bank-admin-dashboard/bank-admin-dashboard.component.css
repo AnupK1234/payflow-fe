@@ -2,7 +2,9 @@
     background-color: #f9fafb;
     border-radius: 8px;
     min-height: calc(100vh - 100px);
+    padding: 1.5rem;
 }
+
 
 .icon-circle {
     display: flex;
@@ -12,4 +14,46 @@
     height: 42px;
     border-radius: 50%;
     font-size: 1.2rem;
+    transition: transform 0.2s;
+}
+
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    transition: 0.3s ease-in-out;
+}
+
+
+table.table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+table.table thead th {
+    border-bottom: 2px solid #dee2e6;
+}
+
+table.table tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+    transition: 0.2s;
+}
+
+
+#paymentChart {
+    width: 100% !important;
+    height: 250px !important;
+}
+
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+
+    .icon-circle {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
 }
