@@ -1,41 +1,74 @@
-<div class="container mt-4">
-  <h2>Welcome, {{ user.username }}</h2>
+<div class="container-fluid py-4">
+  <div class="row g-4">
+    <!-- Welcome Section -->
+    <div class="col-12">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center">
+            <div class="bg-warning rounded-circle p-3 me-4">
+              <i class="fas fa-hand-wave fa-2x text-white"></i>
+            </div>
+            <div>
+              <h1 class="display-6 fw-bold text-dark mb-1">Welcome, {{ username }}! 👋</h1>
+              <p class="text-muted mb-0">Good to see you back</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <div *ngIf="loading" class="text-center p-4">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p class="mt-2">Loading salary history...</p>
-  </div>
+    <!-- Calendar & Holidays Section -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-header bg-primary text-white">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-calendar-alt me-2"></i>
+            Today's Date
+          </h5>
+        </div>
+        <div class="card-body text-center py-5">
+          <div class="display-4 fw-bold text-dark mb-2">
+            {{ currentDate | date:'EEEE' }}
+          </div>
+          <div class="h3 text-muted">
+            {{ currentDate | date:'MMMM d, yyyy' }}
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <div *ngIf="!loading && salaryHistory.length > 0">
-    <h4>Salary History</h4>
-    <table class="table table-striped mt-3">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Basic</th>
-          <th>HRA</th>
-          <th>Allowances</th>
-          <th>Deductions</th>
-          <th>Net Salary</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let s of salaryHistory">
-          <td>{{ s.id }}</td>
-          <td>{{ s.basic }}</td>
-          <td>{{ s.hra }}</td>
-          <td>{{ s.allowances }}</td>
-          <td>{{ s.deductions }}</td>
-          <td>{{ s.netSalary }}</td>
-          <td>{{ s.startDate | date: 'mediumDate' }}</td>
-          <td>{{ s.endDate ? (s.endDate | date: 'mediumDate') : '-' }}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <button class="btn btn-primary me-2" (click)="downloadPdf()">Download PDF</button>
-    <button class="btn btn-secondary" (click)="downloadCsv()">Download CSV</button>
+    <!-- Upcoming Holidays -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-header bg-success text-white">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-umbrella-beach me-2"></i>
+            Upcoming Holidays
+          </h5>
+        </div>
+        <div class="card-body">
+          <div *ngIf="upcomingHolidays.length > 0; else noHolidays">
+            <div class="list-group list-group-flush">
+              <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 py-3"
+                   *ngFor="let holiday of upcomingHolidays">
+                <div>
+                  <div class="fw-bold text-danger">{{ holiday.date | date:'MMM d' }}</div>
+                  <small class="text-muted">{{ holiday.name }}</small>
+                </div>
+                <span class="badge bg-light text-dark fs-6">
+                  {{ getDaysUntil(holiday.date) }} days
+                </span>
+              </div>
+            </div>
+          </div>
+          <ng-template #noHolidays>
+            <div class="text-center text-muted py-4">
+              <i class="fas fa-calendar-times fa-2x mb-3"></i>
+              <p class="mb-0">No upcoming holidays</p>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
