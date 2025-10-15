@@ -1,0 +1,286 @@
+<div class="container mt-4">
+  
+  <div class="row">
+    <div class="col-12">
+      <h2 class="mb-4 text-primary">Deposit Request</h2>
+    </div>
+  </div>
+
+  <div class="row">
+   
+    <div class="col-lg-6 mb-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white py-3">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-plus-circle me-2"></i>New Request
+          </h5>
+        </div>
+        <div class="card-body p-4">
+          <form (ngSubmit)="submitDeposit()" class="compact-form">
+            
+            <div class="mb-3">
+              <label for="amount" class="form-label fw-semibold">Amount</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-currency-rupee text-primary"></i>
+                </span>
+                <input type="number" 
+                       id="amount"
+                       class="form-control" 
+                       [(ngModel)]="amount" 
+                       name="amount" 
+                       required 
+                       min="1"
+                       placeholder="Enter amount">
+              </div>
+              <div class="form-text text-muted">Minimum amount: ₹1</div>
+            </div>
+
+            
+            <div class="mb-4">
+              <label for="reason" class="form-label fw-semibold">Reason</label>
+              <textarea id="reason"
+                        class="form-control" 
+                        [(ngModel)]="reason" 
+                        name="reason" 
+                        rows="2" 
+                        maxlength="200"
+                        placeholder="Brief reason for deposit request"></textarea>
+              <div class="form-text text-end text-muted small">{{reason.length}}/200</div>
+            </div>
+
+           
+            <div class="d-grid">
+              <button type="submit" 
+                      [disabled]="isLoading"
+                      class="btn btn-primary btn-lg">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                <i class="bi bi-send-check me-2" *ngIf="!isLoading"></i>
+                {{ isLoading ? 'Processing...' : 'Submit Request' }}
+              </button>
+            </div>
+          </form>
+
+          
+          <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            {{ successMessage }}
+            <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+          </div>
+          
+          <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            {{ errorMessage }}
+            <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mt-3">
+        <div class="card-body py-3">
+          <div class="row text-center">
+            <div class="col-4">
+              <div class="text-primary fw-bold fs-5">{{getPendingCount()}}</div>
+              <div class="text-muted small">Pending</div>
+            </div>
+            <div class="col-4 border-start">
+              <div class="text-success fw-bold fs-5">{{getApprovedCount()}}</div>
+              <div class="text-muted small">Approved</div>
+            </div>
+            <div class="col-4 border-start">
+              <div class="text-danger fw-bold fs-5">{{getRejectedCount()}}</div>
+              <div class="text-muted small">Rejected</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+   
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-clock-history me-2 text-primary"></i>Recent Requests
+            </h5>
+            <span class="badge bg-primary rounded-pill">{{deposits.length}}</span>
+          </div>
+        </div>
+        
+        <div class="card-body p-3">
+          
+          <div class="row g-2 mb-3">
+            <div class="col-8">
+              <input type="text" 
+                     class="form-control form-control-sm" 
+                     [(ngModel)]="searchTerm" 
+                     (input)="applyFilters()"
+                     placeholder="Search requests...">
+            </div>
+            <div class="col-4">
+              <select class="form-select form-select-sm" 
+                      [(ngModel)]="statusFilter" 
+                      (change)="applyFilters()">
+                <option value="ALL">All</option>
+                <option value="PENDING">Pending</option>
+                <option value="APPROVED">Approved</option>
+                <option value="REJECTED">Rejected</option>
+              </select>
+            </div>
+          </div>
+
+          
+          <div *ngIf="isFetching" class="text-center py-4">
+            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+            <p class="text-muted small mt-2 mb-0">Loading requests...</p>
+          </div>
+
+          
+          <div *ngIf="!isFetching" class="recent-requests">
+            <div *ngIf="filteredDeposits.length > 0">
+              <div class="list-group list-group-flush">
+                <div *ngFor="let d of filteredDeposits.slice(0, 5)" 
+                     class="list-group-item px-0 py-2 border-0">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-bold text-success">₹{{d.amount | number}}</span>
+                        <span [class]="getStatusBadgeClass(d.status) + ' small'">
+                          {{d.status}}
+                        </span>
+                      </div>
+                      <p class="text-muted small mb-1 line-clamp-2">{{d.reason}}</p>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">#{{d.id}}</small>
+                        <small class="text-muted">{{d.createdAt | date:'shortDate'}}</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              
+              <div *ngIf="filteredDeposits.length > 5" class="text-center mt-3">
+                <a href="javascript:void(0)" class="text-primary small text-decoration-none">
+                  View all {{filteredDeposits.length}} requests
+                  <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+              </div>
+            </div>
+
+            
+            <div *ngIf="filteredDeposits.length === 0" class="text-center py-4">
+              <i class="bi bi-inbox display-6 text-muted mb-3"></i>
+              <p class="text-muted mb-2">No requests found</p>
+              <small class="text-muted">
+                {{ deposits.length === 0 ? 'Create your first deposit request' : 'Try different filters' }}
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="row mt-4" *ngIf="deposits.length > 0">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="card-title mb-0">
+              <i class="bi bi-table me-2 text-primary"></i>Complete History
+            </h6>
+            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#historyTable">
+              <i class="bi bi-chevron-down"></i>
+            </button>
+          </div>
+        </div>
+        <div class="collapse show" id="historyTable">
+          <div class="card-body p-0">
+           
+            <div class="p-3 bg-light border-bottom">
+              <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                  <label class="form-label small fw-semibold">Search</label>
+                  <input type="text" 
+                         class="form-control form-control-sm" 
+                         [(ngModel)]="searchTerm" 
+                         (input)="applyFilters()"
+                         placeholder="Search...">
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label small fw-semibold">Status</label>
+                  <select class="form-select form-select-sm" 
+                          [(ngModel)]="statusFilter" 
+                          (change)="applyFilters()">
+                    <option value="ALL">All Status</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="APPROVED">Approved</option>
+                    <option value="REJECTED">Rejected</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label small fw-semibold">Sort By</label>
+                  <select class="form-select form-select-sm" 
+                          [(ngModel)]="sortBy" 
+                          (change)="applyFilters()">
+                    <option value="newest">Newest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="amount-high">Amount High</option>
+                    <option value="amount-low">Amount Low</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <button (click)="clearFilters()" 
+                          class="btn btn-sm btn-outline-secondary w-100">
+                    Clear
+                  </button>
+                </div>
+                <div class="col-md-3 text-end">
+                  <small class="text-muted">
+                    Showing {{filteredDeposits.length}} of {{deposits.length}}
+                    <span *ngIf="filteredDeposits.length > 0"> • Total: ₹{{getTotalAmount() | number}}</span>
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col" class="ps-3">ID</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Reason</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" class="pe-3">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let d of filteredDeposits">
+                    <td class="ps-3 fw-semibold">#{{d.id}}</td>
+                    <td class="fw-bold text-success">₹{{d.amount | number}}</td>
+                    <td>
+                      <span class="text-truncate d-inline-block" style="max-width: 250px;" [title]="d.reason">
+                        {{d.reason}}
+                      </span>
+                    </td>
+                    <td>
+                      <span [class]="getStatusBadgeClass(d.status)">
+                        {{d.status}}
+                      </span>
+                    </td>
+                    <td class="pe-3 text-muted small">{{d.createdAt | date:'medium'}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

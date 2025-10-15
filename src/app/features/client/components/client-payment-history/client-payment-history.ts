@@ -19,7 +19,7 @@ export class ClientPaymentHistory implements OnInit {
   errorMessage = '';
   isLoading = false;
 
-  private validStatuses: PaymentStatus[] = ['PENDING', 'ACCEPTED', 'PAID', 'FAILED', 'REJECTED'];
+  private validStatuses: PaymentStatus[] = ['PENDING', 'ACCEPTED', 'REJECTED'];
 
   constructor(private clientService: ClientService) {}
 

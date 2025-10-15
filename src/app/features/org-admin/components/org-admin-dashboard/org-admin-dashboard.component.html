@@ -1,7 +1,7 @@
 <div class="dashboard-container p-3">
 
   <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4">
+  <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between mb-4 gap-2">
     <div>
       <h3 class="fw-bold mb-0">Organization Admin Dashboard</h3>
       <small class="text-muted">Last updated: {{ lastUpdated | date:'mediumTime' }}</small>
@@ -13,15 +13,15 @@
 
   <!-- Stats Cards -->
   <div class="row g-3 mb-4">
-    <div class="col-md-3" *ngFor="let stat of statsArray">
-      <div class="card shadow-sm border-0 rounded-3 p-3">
+    <div class="col-6 col-md-3" *ngFor="let stat of statsArray">
+      <div class="card shadow-sm border-0 rounded-3 p-3 h-100">
         <div class="d-flex justify-content-between align-items-center">
           <div>
             <h6 class="text-muted mb-1">{{ stat.label }}</h6>
-            <h4 class="fw-bold">{{ stat.value }}</h4>
+            <h4 class="fw-bold mb-0">{{ stat.value }}</h4>
           </div>
           <div class="icon-circle d-flex align-items-center justify-content-center {{ stat.bg }}">
-            <i class="{{ stat.icon }}"></i>
+            <i class="{{ stat.icon }} fs-4"></i>
           </div>
         </div>
       </div>
@@ -35,17 +35,18 @@
     <div class="col-lg-4">
       <div class="card shadow-sm border-0 rounded-3 p-3 h-100">
         <h6 class="fw-bold mb-3">Requests Distribution</h6>
-        <div class="position-relative">
+        <div class="position-relative" style="min-height: 250px;">
           <canvas baseChart
-            [data]="pieChartData"
-            [type]="'pie'"
-            [options]="pieChartOptions">
+                  [data]="pieChartData"
+                  [type]="'pie'"
+                  [options]="pieChartOptions">
           </canvas>
-          <div *ngIf="!pieChartData.datasets[0].data.length" 
-               class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-light">
-            <i class="bi bi-pie-chart fs-3 text-muted"></i>
-            <p class="mb-0 ms-2 text-muted">[Pie Chart Placeholder]</p>
-          </div>
+          <ng-container *ngIf="!pieChartData?.datasets?.[0]?.data?.length">
+            <div class="placeholder-overlay d-flex justify-content-center align-items-center bg-light">
+              <i class="bi bi-pie-chart fs-3 text-muted"></i>
+              <p class="mb-0 ms-2 text-muted">No data available</p>
+            </div>
+          </ng-container>
         </div>
       </div>
     </div>
@@ -60,17 +61,18 @@
             <option>2024</option>
           </select>
         </div>
-        <div class="position-relative">
+        <div class="position-relative" style="min-height: 250px;">
           <canvas baseChart
-            [data]="lineChartData"
-            [type]="'line'"
-            [options]="lineChartOptions">
+                  [data]="lineChartData"
+                  [type]="'line'"
+                  [options]="lineChartOptions">
           </canvas>
-          <div *ngIf="!lineChartData.datasets[0].data.length" 
-               class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-light">
-            <i class="bi bi-graph-up fs-3 text-muted"></i>
-            <p class="mb-0 ms-2 text-muted">[Line Chart Placeholder]</p>
-          </div>
+          <ng-container *ngIf="!lineChartData?.datasets?.[0]?.data?.length">
+            <div class="placeholder-overlay d-flex justify-content-center align-items-center bg-light">
+              <i class="bi bi-graph-up fs-3 text-muted"></i>
+              <p class="mb-0 ms-2 text-muted">No data available</p>
+            </div>
+          </ng-container>
         </div>
       </div>
     </div>
@@ -83,30 +85,38 @@
       <h6 class="fw-bold mb-0">Recent Salary Requests</h6>
       <a routerLink="/org-admin/requests" class="text-primary small">View All</a>
     </div>
-    <table class="table table-hover align-middle mb-0">
-      <thead class="table-light">
-        <tr>
-          <th>Request ID</th>
-          <th>Status</th>
-          <th>Requested At</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let req of recentRequests">
-          <td>{{ req.id }}</td>
-          <td>
-            <span class="badge" [ngClass]="{
-              'bg-success': req.status === 'APPROVED',
-              'bg-warning text-dark': req.status === 'PENDING',
-              'bg-danger': req.status === 'REJECTED'
-            }">
-              {{ req.status }}
-            </span>
-          </td>
-          <td>{{ req.requestDate | date:'medium' }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" aria-label="Recent salary requests">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Request ID</th>
+            <th scope="col">Status</th>
+            <th scope="col">Requested At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let req of recentRequests">
+            <td>{{ req.id }}</td>
+            <td>
+              <span class="badge"
+                    [ngClass]="{
+                      'bg-success': req.status === 'APPROVED',
+                      'bg-warning text-dark': req.status === 'PENDING',
+                      'bg-danger': req.status === 'REJECTED'
+                    }">
+                {{ req.status }}
+              </span>
+            </td>
+            <td>{{ req.requestDate | date:'medium' }}</td>
+          </tr>
+          <tr *ngIf="!recentRequests?.length">
+            <td colspan="3" class="text-center text-muted">No recent requests available</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
 </div>
+
+

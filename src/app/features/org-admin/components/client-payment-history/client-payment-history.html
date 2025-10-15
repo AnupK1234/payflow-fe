@@ -1,0 +1,126 @@
+<div class="container mt-5">
+ 
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">Payment History</h2>
+      <div class="d-flex align-items-center text-muted small">
+        <i class="bi bi-clock me-1"></i>
+        Last updated: {{ lastUpdated | date:'medium' }}
+      </div>
+    </div>
+
+    
+    <div class="d-flex flex-wrap gap-2 mt-3 mt-md-0">
+      <div class="card text-center border-primary text-primary bg-light p-2" style="min-width:120px;">
+        <small>Total Amount</small>
+        <div class="fw-semibold">₹{{ getTotalAmount() }}</div>
+      </div>
+      <div class="card text-center border-success text-success bg-light p-2" style="min-width:120px;">
+        <small>Completed</small>
+        <div class="fw-semibold">{{ getStatusCount('PAID') }}</div>
+      </div>
+      <div class="card text-center border-warning text-warning bg-light p-2" style="min-width:120px;">
+        <small>Pending</small>
+        <div class="fw-semibold">{{ getStatusCount('PENDING') }}</div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="card mb-4 p-3 border-light bg-light">
+    <h5 class="mb-3">Filter Payments</h5>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Date Range</label>
+        <div class="d-flex gap-2">
+          <input type="date" [(ngModel)]="startDate" class="form-control" placeholder="From">
+          <input type="date" [(ngModel)]="endDate" class="form-control" placeholder="To">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Status</label>
+        <select [(ngModel)]="status" class="form-select">
+          <option value="">All Status</option>
+          <option value="PENDING">Pending</option>
+          <option value="ACCEPTED">Accepted</option>
+          <option value="REJECTED">Rejected</option>
+        </select>
+      </div>
+      <div class="col-md-4 d-flex align-items-end">
+        <button (click)="fetchPaymentHistory()" class="btn btn-primary w-100">
+          <i class="bi bi-funnel-fill me-1"></i> Apply Filters
+        </button>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="card shadow-sm mb-3">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Request ID</th>
+            <th>Amount</th>
+            <th>Requested At</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let req of paymentHistory">
+            <td>{{ req.id }}</td>
+            <td>₹{{ req.amount }}</td>
+            <td>{{ req.createdAt ? (req.createdAt | date:'medium') : '-' }}</td>
+            <td>
+              <span class="badge"
+                    [ngClass]="{
+                      
+                      'bg-warning text-dark': req.status === 'PENDING',
+                      'bg-primary text-light': req.status === 'ACCEPTED',
+                      
+                      'bg-secondary text-light': req.status === 'REJECTED'
+                    }">
+                {{ req.status }}
+              </span>
+            </td>
+          </tr>
+
+          <tr *ngIf="!loading && paymentHistory.length === 0">
+            <td colspan="4" class="text-center py-5">
+              <div class="text-muted">
+                <i class="bi bi-inbox display-4 mb-2"></i>
+                <h5>No payment records found</h5>
+                <p>Try adjusting your filters or check back later for new payment requests.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <div *ngIf="loading" class="text-center my-4">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2 text-muted">Loading payment history...</p>
+  </div>
+
+ 
+  <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-start">
+    <i class="bi bi-exclamation-circle-fill me-2"></i>
+    <div>
+      <h6 class="alert-heading">Error loading payment history</h6>
+      <p class="mb-1">{{ errorMessage }}</p>
+      <button (click)="fetchPaymentHistory()" class="btn btn-link p-0">Try again</button>
+    </div>
+  </div>
+
+
+  <div *ngIf="paymentHistory.length > 0 && !loading" class="d-flex justify-content-between align-items-center mt-3">
+    <small class="text-muted">Showing {{ paymentHistory.length }} payment records</small>
+    <div>
+      <button class="btn btn-outline-secondary btn-sm me-1">Previous</button>
+      <button class="btn btn-outline-secondary btn-sm">Next</button>
+    </div>
+  </div>
+</div>

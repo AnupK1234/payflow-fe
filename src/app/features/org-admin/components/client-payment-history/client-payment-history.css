@@ -1,0 +1,104 @@
+/* === Container Styling === */
+.container {
+  font-family: 'Inter', sans-serif;
+}
+
+/* === Summary Cards === */
+.bg-blue-50, .bg-green-50, .bg-yellow-50 {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.bg-blue-50:hover, .bg-green-50:hover, .bg-yellow-50:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* === Table Styling === */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+th, td {
+  transition: background-color 0.2s ease;
+}
+tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* === Status Badges === */
+.status-paid {
+  background-color: #d1fae5;
+  color: #065f46;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #78350f;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.status-accepted {
+  background-color: #dbeafe;
+  color: #1e40af;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.status-failed, .status-rejected {
+  background-color: #fee2e2;
+  color: #991b1b;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.status-default {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+/* === Buttons === */
+button {
+  transition: all 0.2s ease;
+}
+button:hover {
+  transform: translateY(-1px);
+}
+
+/* === Loader === */
+.animate-spin {
+  border-top-color: #3b82f6;
+}
+
+/* === Filter Inputs === */
+input[type="date"], select {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+input[type="date"]:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* === Responsive tweaks === */
+@media (max-width: 768px) {
+  .flex-col-md {
+    flex-direction: column !important;
+  }
+  .gap-md {
+    gap: 1rem !important;
+  }
+}
