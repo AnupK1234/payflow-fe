@@ -32,6 +32,9 @@
                 <th>DA</th>
                 <th>PF</th>
                 <th>Net Salary</th>
+                <th>Effective from</th>
+                <th>Effective To</th>
+                <th>Is current Salary?</th>
               </tr>
             </thead>
             <tbody>
@@ -50,6 +53,9 @@
                     {{ (s.basic + s.hra + s.da + s.other_allowances - s.pf) | currency:'INR' }}
                   </ng-template>
                 </td>
+                <td>{{s.effectiveFrom}}</td>
+                <td>{{s.effectiveTo || "N/A"}}</td>
+                <td>{{s.isCurrent}}</td>
               </tr>
             </tbody>
           </table>

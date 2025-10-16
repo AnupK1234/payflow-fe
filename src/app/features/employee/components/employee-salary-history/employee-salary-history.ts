@@ -78,11 +78,6 @@ export class EmployeeSalaryHistoryComponent implements OnInit {
     this.service.getSalaryHistory().subscribe({
       next: (data) => {
         this.salaryHistory = data;
-        console.log('Salary data with dates:', data);
-        if (data && data.length > 0) {
-          console.log('First record effective_from:', data[0].effective_from);
-          console.log('First record effective_to:', data[0].effective_to);
-        }
         this.loading = false;
       },
       error: (err) => {
