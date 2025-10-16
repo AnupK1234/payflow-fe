@@ -35,7 +35,14 @@ export class ClientPaymentRequests implements OnInit {
       stats: this.clientService.getDashboardStats().pipe(catchError(() => of(this.stats)))
     }).subscribe(({ accounts, requests, stats }) => {
       this.bankAccounts = accounts ?? [];
-      this.paymentRequests = (requests ?? []).filter(r => r.status === 'PENDING');
+
+      this.paymentRequests = (requests ?? [])
+        .filter((r) => r.status === 'PENDING')
+        .map((req) => ({
+          ...req,
+          clientBankAccounts: this.bankAccounts, // attach the list here
+        }));
+
       this.stats = stats;
       this.isLoading = false;
     });
