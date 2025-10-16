@@ -53,10 +53,7 @@ export class RequestDepositComponent implements OnInit {
       return;
     }
 
-    if (!this.reason.trim()) {
-      this.errorMessage = 'Please provide a reason for the deposit request';
-      return;
-    }
+    
 
     if (this.reason.length > 500) {
       this.errorMessage = 'Reason cannot exceed 500 characters';

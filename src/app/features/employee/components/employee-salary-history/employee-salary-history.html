@@ -1,44 +1,77 @@
 <div class="container mt-4">
-  <h2>Salary History</h2>
-
-  <div *ngIf="loading" class="text-center p-4">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p class="mt-2">Loading salary history...</p>
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary mb-0">Salary History</h2>
+    <div *ngIf="!loading && salaryHistory.length > 0" class="btn-group">
+      <button class="btn btn-outline-primary btn-sm" (click)="downloadPdf()">
+        <i class="fas fa-download me-1"></i>PDF
+      </button>
+      <button class="btn btn-outline-secondary btn-sm" (click)="downloadCsv()">
+        <i class="fas fa-download me-1"></i>CSV
+      </button>
+    </div>
   </div>
 
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center p-5">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+    <p class="mt-3 text-muted">Loading salary history...</p>
+  </div>
+
+  <!-- Salary Table -->
   <div *ngIf="!loading && salaryHistory.length > 0">
-    <table class="table table-striped mt-3">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Basic</th>
-          <th>HRA</th>
-          <th>Allowances</th>
-          <th>Deductions</th>
-          <th>Net Salary</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let s of salaryHistory">
-          <td>{{ s.id }}</td>
-          <td>{{ s.basic }}</td>
-          <td>{{ s.hra }}</td>
-          <td>{{ s.allowances }}</td>
-          <td>{{ s.deductions }}</td>
-          <td>{{ s.netSalary }}</td>
-          <td>{{ s.startDate | date: 'mediumDate' }}</td>
-          <td>{{ s.endDate ? (s.endDate | date: 'mediumDate') : '-' }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="card shadow-sm">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-primary">
+              <tr>
+                <th class="ps-3">ID</th>
+                <th>Basic</th>
+                <th>HRA</th>
+                <th>DA</th>
+                <th>PF</th>
+                <th>Net Salary</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let s of salaryHistory" class="align-middle">
+                <td class="ps-3 fw-semibold text-dark">#{{ s.id }}</td>
+                <td class="fw-semibold">{{ s.basic | currency:'INR' }}</td>
+                <td class="text-success">{{ s.hra | currency:'INR' }}</td>
+                <td class="text-info">{{ s.da | currency:'INR' }}</td>
+                <td class="text-danger">{{ s.pf | currency:'INR' }}</td>
+                <td class="fw-bold text-primary">
+                  <!-- Calculate net salary if not provided -->
+                  <span *ngIf="s.netSalary; else calculateNet">
+                    {{ s.netSalary | currency:'INR' }}
+                  </span>
+                  <ng-template #calculateNet>
+                    {{ (s.basic + s.hra + s.da + s.other_allowances - s.pf) | currency:'INR' }}
+                  </ng-template>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-    <button class="btn btn-primary me-2" (click)="downloadPdf()">Download PDF</button>
-    <button class="btn btn-secondary" (click)="downloadCsv()">Download CSV</button>
+    <!-- Download Buttons -->
+    <div class="d-flex justify-content-end mt-4">
+      <button class="btn btn-primary me-2" (click)="downloadPdf()">
+        <i class="fas fa-file-pdf me-2"></i>Download PDF
+      </button>
+      <button class="btn btn-secondary" (click)="downloadCsv()">
+        <i class="fas fa-file-csv me-2"></i>Download CSV
+      </button>
+    </div>
   </div>
 
-  <div *ngIf="!loading && salaryHistory.length === 0" class="text-muted mt-3">
-    No salary records found.
+  <!-- Empty State -->
+  <div *ngIf="!loading && salaryHistory.length === 0" class="text-center py-5">
+    <i class="fas fa-file-invoice-dollar fa-3x text-muted mb-3"></i>
+    <h4 class="text-muted">No salary records found</h4>
+    <p class="text-muted">Your salary history will appear here once available.</p>
   </div>
 </div>
