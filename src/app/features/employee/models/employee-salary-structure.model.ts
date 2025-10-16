@@ -9,8 +9,8 @@ export interface EmployeeSalaryStructureResponseDTO {
   pf: number; 
   deductions?: number; 
   netSalary?: number; 
-  effective_from: string; 
-  effective_to: string; 
-  is_current: boolean;
+  effectiveFrom: string; 
+  effectiveTo: string; 
+  isCurrent: boolean;
   employee_id: number;
 }
