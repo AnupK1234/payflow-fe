@@ -7,11 +7,12 @@ import { SalaryDisbursementRequest } from "../../models/salary-filters.interface
 import { NavbarComponent } from "../../../../shared/components/navbar/navbar.component";
 import { NgChartsModule } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-org-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, NgChartsModule],
+  imports: [CommonModule, NavbarComponent, NgChartsModule, RouterLink],
   templateUrl: './org-admin-dashboard.component.html',
   styleUrls: ['./org-admin-dashboard.component.css']
 })
