@@ -208,7 +208,8 @@
                       IFSC Code <span class="text-danger">*</span>
                     </label>
                     <input type="text" id="ifsc" formControlName="ifsc" class="form-control text-uppercase"
-                      [class.is-invalid]="isFieldInvalid('ifsc')" placeholder="ABCD0123456" maxlength="11">
+                      (input)="toUppercase('ifsc')" [class.is-invalid]="isFieldInvalid('ifsc')"
+                      placeholder="ABCD0123456" maxlength="11">
                     @if (isFieldInvalid('ifsc')) {
                     <div class="invalid-feedback">
                       {{ getErrorMessage('ifsc') }}
@@ -237,7 +238,8 @@
                       PAN Card Number <span class="text-danger">*</span>
                     </label>
                     <input type="text" id="panNumber" formControlName="panNumber" class="form-control text-uppercase"
-                      [class.is-invalid]="isFieldInvalid('aadhaarNumber')" placeholder="ABCDE1234F" maxlength="12">
+                      (input)="toUppercase('panNumber')" [class.is-invalid]="isFieldInvalid('aadhaarNumber')"
+                      placeholder="ABCDE1234F" maxlength="12">
                     @if (isFieldInvalid('panNumber')) {
                     <div class="invalid-feedback">
                       {{ getErrorMessage('panNumber') }}
@@ -274,79 +276,14 @@
                     </label>
                     <div class="input-group">
                       <span class="input-group-text">₹</span>
-                      <input type="number" id="basic" formControlName="basic" class="form-control"
-                        [class.is-invalid]="isFieldInvalid('basic')" placeholder="0" min="0" step="100">
+                      <input type="number" id="basic" formControlName="basic" class="form-control" placeholder="0"
+                        min="0" step="100" />
                     </div>
                     @if (isFieldInvalid('basic')) {
                     <div class="invalid-feedback d-block">
                       {{ getErrorMessage('basic') }}
                     </div>
                     }
-                  </div>
-
-                  <div class="col-md-6">
-                    <label for="hra" class="form-label fw-semibold">
-                      HRA <span class="text-danger">*</span>
-                    </label>
-                    <div class="input-group">
-                      <span class="input-group-text">₹</span>
-                      <input type="number" id="hra" formControlName="hra" class="form-control"
-                        [class.is-invalid]="isFieldInvalid('hra')" placeholder="0" min="0" step="100">
-                    </div>
-                    @if (isFieldInvalid('hra')) {
-                    <div class="invalid-feedback d-block">
-                      {{ getErrorMessage('hra') }}
-                    </div>
-                    }
-                  </div>
-
-                  <div class="col-md-6">
-                    <label for="da" class="form-label fw-semibold">
-                      Dearness Allowance (DA) <span class="text-danger">*</span>
-                    </label>
-                    <div class="input-group">
-                      <span class="input-group-text">₹</span>
-                      <input type="number" id="da" formControlName="da" class="form-control"
-                        [class.is-invalid]="isFieldInvalid('da')" placeholder="0" min="0" step="100">
-                    </div>
-                    @if (isFieldInvalid('da')) {
-                    <div class="invalid-feedback d-block">
-                      {{ getErrorMessage('da') }}
-                    </div>
-                    }
-                  </div>
-
-                  <div class="col-md-6">
-                    <label for="allowances" class="form-label fw-semibold">
-                      Other Allowances <span class="text-danger">*</span>
-                    </label>
-                    <div class="input-group">
-                      <span class="input-group-text">₹</span>
-                      <input type="number" id="allowances" formControlName="allowances" class="form-control"
-                        [class.is-invalid]="isFieldInvalid('allowances')" placeholder="0" min="0" step="100">
-                    </div>
-                    @if (isFieldInvalid('allowances')) {
-                    <div class="invalid-feedback d-block">
-                      {{ getErrorMessage('allowances') }}
-                    </div>
-                    }
-                  </div>
-
-                  <div class="col-md-6">
-                    <label for="pf" class="form-label fw-semibold">
-                      Provident Fund (PF) <span class="text-danger">*</span>
-                    </label>
-                    <div class="input-group">
-                      <span class="input-group-text">₹</span>
-                      <input type="number" id="pf" formControlName="pf" class="form-control"
-                        [class.is-invalid]="isFieldInvalid('pf')" placeholder="0" min="0" step="100">
-                    </div>
-                    @if (isFieldInvalid('pf')) {
-                    <div class="invalid-feedback d-block">
-                      {{ getErrorMessage('pf') }}
-                    </div>
-                    }
-                    <small class="text-muted">Deduction</small>
                   </div>
                 </div>
 
@@ -356,45 +293,36 @@
                     <div class="card-body">
                       <h6 class="fw-bold mb-3">
                         <i class="bi bi-calculator me-2"></i>
-                        Salary Summary
+                        Salary Breakdown
                       </h6>
+
                       <div class="row g-2">
                         <div class="col-6">
                           <div class="d-flex justify-content-between">
-                            <span class="text-muted">Basic:</span>
-                            <span class="fw-semibold">{{ formatCurrency(employeeForm.value.basic || 0) }}</span>
+                            <span class="text-muted">HRA (25%):</span>
+                            <span class="fw-semibold">{{ formatCurrency(getHra()) }}</span>
                           </div>
                         </div>
                         <div class="col-6">
                           <div class="d-flex justify-content-between">
-                            <span class="text-muted">HRA:</span>
-                            <span class="fw-semibold">{{ formatCurrency(employeeForm.value.hra || 0) }}</span>
+                            <span class="text-muted">DA (15%):</span>
+                            <span class="fw-semibold">{{ formatCurrency(getDa()) }}</span>
                           </div>
                         </div>
                         <div class="col-6">
                           <div class="d-flex justify-content-between">
-                            <span class="text-muted">DA:</span>
-                            <span class="fw-semibold">{{ formatCurrency(employeeForm.value.da || 0) }}</span>
-                          </div>
-                        </div>
-                        <div class="col-6">
-                          <div class="d-flex justify-content-between">
-                            <span class="text-muted">Allowances:</span>
-                            <span class="fw-semibold">{{ formatCurrency(employeeForm.value.allowances || 0) }}</span>
-                          </div>
-                        </div>
-                        <div class="col-6">
-                          <div class="d-flex justify-content-between">
-                            <span class="text-danger">PF (Deduction):</span>
-                            <span class="fw-semibold text-danger">- {{ formatCurrency(employeeForm.value.pf || 0)
-                              }}</span>
+                            <span class="text-danger">PF (10%):</span>
+                            <span class="fw-semibold text-danger">- {{ formatCurrency(getPf()) }}</span>
                           </div>
                         </div>
                       </div>
-                      <hr class="my-3">
+
+                      <hr class="my-3" />
                       <div class="d-flex justify-content-between">
                         <span class="fw-bold fs-5">Net Salary:</span>
-                        <span class="fw-bold fs-5 text-success">{{ formatCurrency(calculateTotalSalary()) }}</span>
+                        <span class="fw-bold fs-5 text-success">
+                          {{ formatCurrency(calculateNetSalary()) }}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -415,6 +343,7 @@
                   </button>
                 </div>
               </div>
+
               }
             </form>
           </div>
