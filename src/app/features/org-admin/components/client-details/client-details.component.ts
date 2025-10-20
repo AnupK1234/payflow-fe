@@ -52,7 +52,6 @@ export class ClientDetailsComponent implements OnInit {
       amount: ['', [Validators.required, Validators.min(1)]],
       reason: ['', [Validators.required, Validators.maxLength(500)]],
       dueDate: ['', [Validators.required]],
-      invoiceNumber: ['', [Validators.maxLength(50)]],
       taxAmount: ['', [Validators.min(0)]],
       notes: ['', [Validators.maxLength(1000)]],
     });
@@ -109,7 +108,6 @@ export class ClientDetailsComponent implements OnInit {
       amount: this.paymentRequestForm.value.amount,
       reason: this.paymentRequestForm.value.reason,
       dueDate: this.paymentRequestForm.value.dueDate,
-      invoiceNumber: this.paymentRequestForm.value.invoiceNumber || undefined,
       taxAmount: this.paymentRequestForm.value.taxAmount || 0,
       notes: this.paymentRequestForm.value.notes || undefined,
     };
@@ -164,7 +162,6 @@ export class ClientDetailsComponent implements OnInit {
       amount: 'Amount',
       reason: 'Description',
       dueDate: 'Due Date',
-      invoiceNumber: 'Invoice Number',
       taxAmount: 'Tax Amount',
       notes: 'Notes',
     };
