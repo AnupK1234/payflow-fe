@@ -8,7 +8,6 @@ export interface ClientPaymentRequestDTO {
   amount: number;
   reason: string;
   dueDate: string;
-  invoiceNumber?: string;
   taxAmount?: number;
   notes?: string;
 }
@@ -19,7 +18,6 @@ export interface ClientPaymentRequest {
   amount: number;
   description: string;
   dueDate: string;
-  invoiceNumber?: string;
   taxAmount?: number;
   notes?: string;
   status: string;
