@@ -32,14 +32,14 @@ export class DepositRequestComponent {
 
     const depositRequest: CreateDepositRequest = {
       amount: this.amount,
-      reason: this.reason
+      // reason: this.reason
     };
 
     this.clientService.createDepositRequest(depositRequest).subscribe({
       next: () => {
         this.successMessage = 'Deposit request submitted successfully!';
         this.amount = null;
-        this.reason = '';
+        // this.reason = '';
         this.isLoading = false;
       },
       error: (err) => {
