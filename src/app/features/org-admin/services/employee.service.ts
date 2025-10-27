@@ -32,20 +32,13 @@ export interface CreateEmployeeRequest {
   employeeCode: string;
   aadhaarNumber: number;
   panNumber: string;
-  organizationId: string;
   jobTitle: string;
   dateOfJoining: string;
   bankAccount: {
     accountNumber: string;
     ifsc: string;
   };
-  salary: {
-    basic: number;
-    hra: number;
-    da: number;
-    pf: number;
-    allowances: number;
-  };
+  basicSalary: number;
 }
 
 export interface UpdateEmployeeRequest {

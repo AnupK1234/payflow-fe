@@ -25,11 +25,6 @@ export class EmployeeSalaryStructuresComponent {
     effectiveFrom: ['', Validators.required],
     effectiveTo: ['', Validators.required],
     basic: [0, Validators.required],
-    hra: [0, Validators.required],
-    da: [0, Validators.required],
-    pf: [0, Validators.required],
-    otherAllowances: ['', Validators.required],
-    isCurrent: [false, Validators.required],
   });
 
   constructor() {
@@ -77,15 +72,5 @@ export class EmployeeSalaryStructuresComponent {
 
   backToEmployee() {
     this.router.navigate([`/organization/employees/${this.id()}`]);
-  }
-
-  calculateNetSalary(s: any): number {
-    const basic = Number(s.basic) || 0;
-    const hra = Number(s.hra) || 0;
-    const da = Number(s.da) || 0;
-    const pf = Number(s.pf) || 0;
-    const allowances = Number(s.otherAllowances) || 0;
-
-    return basic + hra + da + allowances - pf;
   }
 }

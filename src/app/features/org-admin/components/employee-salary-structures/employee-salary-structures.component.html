@@ -23,7 +23,6 @@
                 <th>HRA</th>
                 <th>DA</th>
                 <th>PF</th>
-                <th>Allowances</th>
                 <th>Net Salary</th>
                 <th>Is Current</th>
             </tr>
@@ -37,9 +36,8 @@
                 <td>{{ s.hra }}</td>
                 <td>{{ s.da }}</td>
                 <td>{{ s.pf }}</td>
-                <td>{{ s.otherAllowances }}</td>
                 <td>
-                    {{calculateNetSalary(s)}}
+                    {{s.netSalary}}
                 </td>
                 <td>{{ s.isCurrent ? '✅' : '❌' }}</td>
             </tr>
@@ -65,27 +63,6 @@
             <div class="col-md-4">
                 <label class="form-label">Basic</label>
                 <input type="number" formControlName="basic" class="form-control" />
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">HRA</label>
-                <input type="number" formControlName="hra" class="form-control" />
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">DA</label>
-                <input type="number" formControlName="da" class="form-control" />
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label">PF</label>
-                <input type="number" formControlName="pf" class="form-control" />
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Other Allowances</label>
-                <input type="text" formControlName="otherAllowances" class="form-control" />
-            </div>
-            <div class="col-md-4 d-flex align-items-center">
-                <label class="form-check-label me-2">Is Current</label>
-                <input type="checkbox" formControlName="isCurrent" class="form-check-input" />
             </div>
         </div>
 

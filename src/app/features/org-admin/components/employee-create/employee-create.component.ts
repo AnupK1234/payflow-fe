@@ -53,10 +53,6 @@ export class EmployeeCreateComponent implements OnInit {
 
       // Salary Details (Step 3)
       basic: ['', [Validators.required, Validators.min(0)]],
-      hra: ['', [Validators.required, Validators.min(0)]],
-      da: ['', [Validators.required, Validators.min(0)]],
-      pf: ['', [Validators.required, Validators.min(0)]],
-      allowances: ['', [Validators.required, Validators.min(0)]],
     });
   }
 
@@ -90,7 +86,7 @@ export class EmployeeCreateComponent implements OnInit {
         ];
         break;
       case 3:
-        fieldsToValidate = ['basic', 'hra', 'da', 'pf', 'allowances'];
+        fieldsToValidate = ['basic'];
         break;
     }
 
@@ -124,19 +120,12 @@ export class EmployeeCreateComponent implements OnInit {
       panNumber: this.employeeForm.value.panNumber,
       aadhaarNumber: this.employeeForm.value.aadhaarNumber,
       jobTitle: this.employeeForm.value.jobTitle,
-      organizationId: JSON.parse(this.cookie.get('user')).organizationId,
       dateOfJoining: this.employeeForm.value.dateOfJoining,
       bankAccount: {
         accountNumber: this.employeeForm.value.accountNumber,
         ifsc: this.employeeForm.value.ifsc,
       },
-      salary: {
-        basic: parseFloat(this.employeeForm.value.basic),
-        hra: parseFloat(this.employeeForm.value.hra),
-        da: parseFloat(this.employeeForm.value.da),
-        pf: parseFloat(this.employeeForm.value.pf),
-        allowances: parseFloat(this.employeeForm.value.allowances),
-      },
+      basicSalary: parseFloat(this.employeeForm.value.basic),
     };
 
     this.employeeService.createEmployee(employeeData).subscribe({
@@ -232,15 +221,38 @@ export class EmployeeCreateComponent implements OnInit {
       accountNumber: 'Account Number',
       ifsc: 'IFSC Code',
       basic: 'Basic Salary',
-      hra: 'HRA',
-      da: 'DA',
-      pf: 'PF',
-      allowances: 'Allowances',
     };
     return labels[fieldName] || fieldName;
   }
 
   getProgressPercentage(): number {
     return (this.currentStep / this.totalSteps) * 100;
+  }
+
+  toUppercase(field: string): void {
+    const control = this.employeeForm.get(field);
+    if (control) {
+      control.setValue(control.value.toUpperCase(), { emitEvent: false });
+    }
+  }
+
+  getHra(): number {
+    const basic = parseFloat(this.employeeForm.value.basic) || 0;
+    return basic * 0.25;
+  }
+
+  getDa(): number {
+    const basic = parseFloat(this.employeeForm.value.basic) || 0;
+    return basic * 0.15;
+  }
+
+  getPf(): number {
+    const basic = parseFloat(this.employeeForm.value.basic) || 0;
+    return basic * 0.1;
+  }
+
+  calculateNetSalary(): number {
+    const basic = parseFloat(this.employeeForm.value.basic) || 0;
+    return basic + this.getHra() + this.getDa() - this.getPf();
   }
 }
